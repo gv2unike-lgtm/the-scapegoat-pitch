@@ -77,6 +77,18 @@ Các ảnh này đã được thay sang bối cảnh châu Á và tinh thần ph
 | `comp-3.jpg` | Đô thị Hong Kong xa hoa mục ruỗng | Pexels photo `37192733` |
 | `comp-4.jpg` | Giám sát đô thị, người nghèo thành dữ liệu/vật thế | Pexels photo `30546990` |
 
+## Ảnh thông tin đầu & chủ đề
+
+| File | Dùng cho | Ý đồ |
+|---|---|---|
+| `info-case.jpg` | Khối thông tin ban đầu trên cover | Case file/giám sát, gợi công nghệ che tội |
+| `theme-class.jpg` | Bất bình đẳng giai cấp | Người lao động đô thị Việt Nam đối lập với xa hoa |
+| `theme-identity.jpg` | Danh tính & nguỵ trang | Chân dung nữ chính trong ánh neon, hai mặt danh tính |
+| `theme-predator.jpg` | Kẻ săn mồi & con mồi | Gương mặt ẩn trong bóng tối, cảm giác bị theo dõi |
+| `theme-mother.jpg` | Tình mẫu tử & ruồng bỏ | Đêm mưa châu Á, ký ức bị bỏ rơi |
+| `theme-tech.jpg` | Công nghệ & sự thật | Camera/giám sát/deepfake |
+| `theme-justice.jpg` | Công lý hay báo thù | Hẻm đêm, noir đô thị và lựa chọn đạo đức |
+
 ## Ảnh nhân vật/cast hiện tại
 
 Các ảnh dưới đây được chọn lại theo logline và mô tả nhân vật: nữ thâm nhập trong ánh neon, nữ phản diện quyền lực thượng lưu, nam giữ bí mật trong suit, Lão Sói tối/ẩn danh, tài phiệt suit, và khách mời nữ thượng lưu. Tất cả đang dùng người châu Á hoặc bối cảnh châu Á/portrait phù hợp hơn với tinh thần Việt Nam - Hồng Kông.

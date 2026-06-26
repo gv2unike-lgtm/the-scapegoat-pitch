@@ -54,6 +54,7 @@ const CONTENT = {
       { role: "Producer (đề bạt)", name: "Irene Trịnh" },
     ],
     image: "images/cover.jpg",         // ảnh nền cover — thay file này
+    infoImage: "images/info-case.jpg?v=20260626-7",
   },
 
   /* ============================ 02 · LOGLINE ============================ */
@@ -94,12 +95,12 @@ const CONTENT = {
   theme: {
     intro: "Một lát cắt tâm lý xã hội về quyền lực, danh tính và cái giá của sự sống còn.",
     items: [
-      { title: "Bất bình đẳng giai cấp", text: "Mạng sống kẻ nghèo trở thành hàng hoá che chắn cho tội ác của giới siêu giàu." },
-      { title: "Danh tính & nguỵ trang", text: "Khi ai cũng là 'thế thân' của một người khác, sự thật về chính mình là thứ đắt nhất." },
-      { title: "Kẻ săn mồi & con mồi", text: "Ranh giới giữa thợ săn và con mồi liên tục bị xoá nhoà cho tới khoảnh khắc cuối cùng." },
-      { title: "Tình mẫu tử & sự ruồng bỏ", text: "Đứa con bị bỏ rơi trong đêm mưa trở về như một định mệnh không thể tránh." },
-      { title: "Công nghệ & sự thật", text: "Deepfake biến tội lỗi thành thứ có thể mua bán, chỉnh sửa và xoá bỏ." },
-      { title: "Công lý hay báo thù", text: "Lật đổ một đế chế từ bên trong — nhưng cái giá phải trả là máu mủ ruột thịt." },
+      { title: "Bất bình đẳng giai cấp", text: "Mạng sống kẻ nghèo trở thành hàng hoá che chắn cho tội ác của giới siêu giàu.", image: "images/theme-class.jpg?v=20260626-7" },
+      { title: "Danh tính & nguỵ trang", text: "Khi ai cũng là 'thế thân' của một người khác, sự thật về chính mình là thứ đắt nhất.", image: "images/theme-identity.jpg?v=20260626-7" },
+      { title: "Kẻ săn mồi & con mồi", text: "Ranh giới giữa thợ săn và con mồi liên tục bị xoá nhoà cho tới khoảnh khắc cuối cùng.", image: "images/theme-predator.jpg?v=20260626-7" },
+      { title: "Tình mẫu tử & sự ruồng bỏ", text: "Đứa con bị bỏ rơi trong đêm mưa trở về như một định mệnh không thể tránh.", image: "images/theme-mother.jpg?v=20260626-7" },
+      { title: "Công nghệ & sự thật", text: "Deepfake biến tội lỗi thành thứ có thể mua bán, chỉnh sửa và xoá bỏ.", image: "images/theme-tech.jpg?v=20260626-7" },
+      { title: "Công lý hay báo thù", text: "Lật đổ một đế chế từ bên trong — nhưng cái giá phải trả là máu mủ ruột thịt.", image: "images/theme-justice.jpg?v=20260626-7" },
     ],
   },
 

@@ -70,8 +70,11 @@ document.title = `${C.cover.title} — ${C.cover.titleEn} · Pitch Deck`;
   el("cover-tagline").textContent = c.tagline;
   el("cover-facts").innerHTML =
     [c.genre, c.year, c.location].filter(Boolean).map((f) => `<span>${esc(f)}</span>`).join("");
-  el("cover-credits").innerHTML = c.credits.map((cr) =>
+  const credits = c.credits.map((cr) =>
     `<div><div class="role">${esc(cr.role)}</div><div class="name">${esc(cr.name)}</div></div>`).join("");
+  el("cover-credits").innerHTML = `
+    <div class="cover__credits-list">${credits}</div>
+    ${c.infoImage ? `<figure class="cover__info-image"><img src="${c.infoImage}" alt="Case file visual"></figure>` : ""}`;
 })();
 
 /* ---------- LOGLINE ---------- */
@@ -83,7 +86,10 @@ el("synopsis-body").innerHTML = C.synopsis.paragraphs.map((p) => `<p>${esc(p)}</
 /* ---------- THEME ---------- */
 el("theme-lead").textContent = C.theme.intro;
 el("theme-grid").innerHTML = C.theme.items.map((t) =>
-  `<div class="theme-cell"><h3>${esc(t.title)}</h3><p>${esc(t.text)}</p></div>`).join("");
+  `<article class="theme-cell">
+    ${t.image ? `<img src="${t.image}" alt="${esc(t.title)}">` : ""}
+    <div class="theme-cell__body"><h3>${esc(t.title)}</h3><p>${esc(t.text)}</p></div>
+  </article>`).join("");
 
 /* ---------- CHARACTERS ---------- */
 el("char-grid").innerHTML = C.characters.items.map((ch) => `
@@ -237,7 +243,7 @@ function editableElements(block) {
 }
 
 function imageTargets(block) {
-  return [...block.querySelectorAll(".char-card__img, .tone-item img, .comp-card img, .cast-card img")]
+  return [...block.querySelectorAll(".cover__info-image img, .theme-cell img, .char-card__img, .tone-item img, .comp-card img, .cast-card img")]
     .filter((node) => node.offsetParent !== null)
     .map((node, index) => {
       const card = node.closest(".char-card, .tone-item, .comp-card, .cast-card");
