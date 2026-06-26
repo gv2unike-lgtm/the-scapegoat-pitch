@@ -77,6 +77,8 @@ Các ảnh này đã được thay sang bối cảnh châu Á và tinh thần ph
 | `comp-3.jpg` | Đô thị Hong Kong xa hoa mục ruỗng | Pexels photo `37192733` |
 | `comp-4.jpg` | Giám sát đô thị, người nghèo thành dữ liệu/vật thế | Pexels photo `30546990` |
 
+Các file deploy hiện dùng tên cache mới: `tone-hongkong.jpg`, `tone-luxury.jpg`, `tone-surveillance.jpg`, `tone-rain.jpg`, `comp-class.jpg`, `comp-alley.jpg`, `comp-city.jpg`, `comp-monitor.jpg`.
+
 ## Ảnh thông tin đầu & chủ đề
 
 | File | Dùng cho | Ý đồ |

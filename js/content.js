@@ -54,7 +54,7 @@ const CONTENT = {
       { role: "Producer (đề bạt)", name: "Irene Trịnh" },
     ],
     image: "images/cover.jpg",         // ảnh nền cover — thay file này
-    infoImage: "images/info-case.jpg?v=20260626-7",
+    infoImage: "images/info-case.jpg",
   },
 
   /* ============================ 02 · LOGLINE ============================ */
@@ -95,12 +95,12 @@ const CONTENT = {
   theme: {
     intro: "Một lát cắt tâm lý xã hội về quyền lực, danh tính và cái giá của sự sống còn.",
     items: [
-      { title: "Bất bình đẳng giai cấp", text: "Mạng sống kẻ nghèo trở thành hàng hoá che chắn cho tội ác của giới siêu giàu.", image: "images/theme-class.jpg?v=20260626-7" },
-      { title: "Danh tính & nguỵ trang", text: "Khi ai cũng là 'thế thân' của một người khác, sự thật về chính mình là thứ đắt nhất.", image: "images/theme-identity.jpg?v=20260626-7" },
-      { title: "Kẻ săn mồi & con mồi", text: "Ranh giới giữa thợ săn và con mồi liên tục bị xoá nhoà cho tới khoảnh khắc cuối cùng.", image: "images/theme-predator.jpg?v=20260626-7" },
-      { title: "Tình mẫu tử & sự ruồng bỏ", text: "Đứa con bị bỏ rơi trong đêm mưa trở về như một định mệnh không thể tránh.", image: "images/theme-mother.jpg?v=20260626-7" },
-      { title: "Công nghệ & sự thật", text: "Deepfake biến tội lỗi thành thứ có thể mua bán, chỉnh sửa và xoá bỏ.", image: "images/theme-tech.jpg?v=20260626-7" },
-      { title: "Công lý hay báo thù", text: "Lật đổ một đế chế từ bên trong — nhưng cái giá phải trả là máu mủ ruột thịt.", image: "images/theme-justice.jpg?v=20260626-7" },
+      { title: "Bất bình đẳng giai cấp", text: "Mạng sống kẻ nghèo trở thành hàng hoá che chắn cho tội ác của giới siêu giàu.", image: "images/theme-class.jpg" },
+      { title: "Danh tính & nguỵ trang", text: "Khi ai cũng là 'thế thân' của một người khác, sự thật về chính mình là thứ đắt nhất.", image: "images/theme-identity.jpg" },
+      { title: "Kẻ săn mồi & con mồi", text: "Ranh giới giữa thợ săn và con mồi liên tục bị xoá nhoà cho tới khoảnh khắc cuối cùng.", image: "images/theme-predator.jpg" },
+      { title: "Tình mẫu tử & sự ruồng bỏ", text: "Đứa con bị bỏ rơi trong đêm mưa trở về như một định mệnh không thể tránh.", image: "images/theme-mother.jpg" },
+      { title: "Công nghệ & sự thật", text: "Deepfake biến tội lỗi thành thứ có thể mua bán, chỉnh sửa và xoá bỏ.", image: "images/theme-tech.jpg" },
+      { title: "Công lý hay báo thù", text: "Lật đổ một đế chế từ bên trong — nhưng cái giá phải trả là máu mủ ruột thịt.", image: "images/theme-justice.jpg" },
     ],
   },
 
@@ -166,10 +166,10 @@ const CONTENT = {
       "bên dưới: ánh đèn neon vàng của thành phố về đêm, lụa và vàng, bóng tối màu cà phê đặc.",
     keywords: ["Golden hour xa hoa", "Neon hổ phách", "Bóng tối espresso", "Lụa & ánh kim", "Tương phản nóng–lạnh"],
     images: [
-      { image: "images/tone-1.jpg?v=20260626-6", caption: "Hong Kong về đêm — neon ướt" },
-      { image: "images/tone-2.jpg?v=20260626-6", caption: "Khách sạn thượng lưu — vàng & gỗ tối" },
-      { image: "images/tone-3.jpg?v=20260626-6", caption: "Giám sát & deepfake — công nghệ che tội" },
-      { image: "images/tone-4.jpg?v=20260626-6", caption: "Đêm mưa châu Á — ký ức ruồng bỏ" },
+      { image: "images/tone-hongkong.jpg", caption: "Hong Kong về đêm — neon ướt" },
+      { image: "images/tone-luxury.jpg", caption: "Khách sạn thượng lưu — vàng & gỗ tối" },
+      { image: "images/tone-surveillance.jpg", caption: "Giám sát & deepfake — công nghệ che tội" },
+      { image: "images/tone-rain.jpg", caption: "Đêm mưa châu Á — ký ức ruồng bỏ" },
     ],
   },
 
@@ -180,10 +180,10 @@ const CONTENT = {
       "Định vị: phim noir xa hoa châu Á cho liên hoan phim quốc tế và nền tảng streaming — " +
       "giao điểm giữa phim tội phạm tâm lý và phê phán giai cấp đang được khán giả toàn cầu ưa chuộng.",
     items: [
-      { title: "Parasite (Ký Sinh Trùng)", note: "Phê phán giai cấp · đời sống đô thị châu Á", image: "images/comp-1.jpg?v=20260626-6" },
-      { title: "The Menu", note: "Giới thượng lưu bị bóc trần · thriller cao cấp", image: "images/comp-2.jpg?v=20260626-6" },
-      { title: "Triangle of Sadness", note: "Châm biếm giàu–nghèo · xa hoa mục ruỗng", image: "images/comp-3.jpg?v=20260626-6" },
-      { title: "Squid Game", note: "Người nghèo thành vật thế · quyền lực giám sát", image: "images/comp-4.jpg?v=20260626-6" },
+      { title: "Parasite (Ký Sinh Trùng)", note: "Phê phán giai cấp · đời sống đô thị châu Á", image: "images/comp-class.jpg" },
+      { title: "The Menu", note: "Giới thượng lưu bị bóc trần · thriller cao cấp", image: "images/comp-alley.jpg" },
+      { title: "Triangle of Sadness", note: "Châm biếm giàu–nghèo · xa hoa mục ruỗng", image: "images/comp-city.jpg" },
+      { title: "Squid Game", note: "Người nghèo thành vật thế · quyền lực giám sát", image: "images/comp-monitor.jpg" },
     ],
   },
 
