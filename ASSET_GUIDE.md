@@ -61,3 +61,16 @@ Các ảnh nền hiện tại được tải về từ Pexels và xử lý lại
 | `bg-budget.jpg` | Pexels: `pexels-kyleloftusstudios-6621416` |
 | `bg-revenue.jpg` | Pexels: `pexels-kyleloftusstudios-4882161` |
 | `bg-timeline.jpg` | Pexels: `pexels-bertellifotografia-12497812` |
+
+## Ảnh nhân vật/cast hiện tại
+
+Các ảnh dưới đây được chọn lại theo logline và mô tả nhân vật: nữ thâm nhập trong ánh neon, nữ phản diện quyền lực thượng lưu, nam giữ bí mật trong suit, Lão Sói tối/ẩn danh, tài phiệt suit, và khách mời nữ thượng lưu. Tất cả đang dùng người châu Á hoặc bối cảnh châu Á/portrait phù hợp hơn với tinh thần Việt Nam - Hồng Kông.
+
+| Vai | File | Nguồn |
+|---|---|---|
+| Minh Phương / Lan Khuê | `actor-lankhue.jpg` | Pexels photo `8271461` |
+| Jennifer / Thanh Hằng | `actor-thanhhang.jpg` | Pexels photo `17129130` |
+| Vũ / Kim Lý | `actor-kimly.jpg` | Pexels photo `26524778` |
+| Lão Sói / Trần Bảo Sơn | `actor-tranbaoson.jpg` | Pexels photo `10686007` |
+| Chồng Jennifer / Thành Long | `actor-thanhlong.jpg` | Pexels photo `21044800` |
+| Khách mời / Lý Nhã Kỳ | `actor-lynhaky.jpg` | Pexels photo `15641099` |

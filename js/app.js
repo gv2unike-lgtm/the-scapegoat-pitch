@@ -44,6 +44,11 @@ function cssImageUrl(src) {
   return src;
 }
 
+function cleanCssUrl(value) {
+  const raw = String(value || "").trim();
+  return raw.replace(/^url\(["']?/, "").replace(/["']?\)$/, "").replace(/^\.\.\//, "");
+}
+
 function applySectionBackgrounds() {
   Object.entries(C.sectionBackgrounds || {}).forEach(([id, image]) => {
     const section = document.getElementById(id);
@@ -231,6 +236,25 @@ function editableElements(block) {
     .filter((node) => node.offsetParent !== null && !node.closest(".admin-modal") && !node.closest(".edit-block-btn"));
 }
 
+function imageTargets(block) {
+  return [...block.querySelectorAll(".char-card__img, .tone-item img, .comp-card img, .cast-card img")]
+    .filter((node) => node.offsetParent !== null)
+    .map((node, index) => {
+      const card = node.closest(".char-card, .tone-item, .comp-card, .cast-card");
+      const label = card?.querySelector(".char-card__name, .cast-card__name, .comp-card__title, figcaption")?.textContent?.trim();
+      const current = node.tagName === "IMG"
+        ? node.getAttribute("src")
+        : cleanCssUrl(node.style.backgroundImage);
+      return { node, index, label: label || `Ảnh ${index + 1}`, current };
+    });
+}
+
+function applyImageTarget(target, src) {
+  if (!src) return;
+  if (target.node.tagName === "IMG") target.node.setAttribute("src", src);
+  else target.node.style.backgroundImage = `url('${src}')`;
+}
+
 function applyStoredEdits() {
   const edits = readEdits();
   Object.entries(edits).forEach(([id, data]) => {
@@ -242,6 +266,11 @@ function applyStoredEdits() {
     const nodes = editableElements(block);
     (data.texts || []).forEach((text, i) => {
       if (nodes[i]) nodes[i].textContent = text;
+    });
+
+    const targets = imageTargets(block);
+    (data.images || []).forEach((src, i) => {
+      if (targets[i]) applyImageTarget(targets[i], src);
     });
   });
 }
@@ -301,6 +330,7 @@ function openBlockEditor(blockId) {
   const modal = ensureAdminModal();
   const panel = modal.querySelector(".admin-panel");
   const nodes = editableElements(block);
+  const targets = imageTargets(block);
   const edits = readEdits();
   const saved = edits[blockId] || {};
   const title = block.querySelector("h2, h1, .footer__title")?.textContent?.trim() || blockId;
@@ -317,6 +347,7 @@ function openBlockEditor(blockId) {
       <input id="edit-file" type="file" accept="image/*">
     </div>
     <div id="edit-text-fields"></div>
+    <div id="edit-image-fields"></div>
     <div class="admin-actions">
       <button class="primary" id="edit-save" type="button">Lưu block</button>
       <button id="edit-reset" type="button">Xoá sửa block</button>
@@ -332,6 +363,24 @@ function openBlockEditor(blockId) {
     fields.appendChild(wrap);
   });
 
+  const imageFields = panel.querySelector("#edit-image-fields");
+  if (targets.length) {
+    const imageTitle = document.createElement("div");
+    imageTitle.className = "admin-field";
+    imageTitle.innerHTML = `<label>Ảnh trong block</label>`;
+    imageFields.appendChild(imageTitle);
+  }
+  targets.forEach((target, i) => {
+    const src = saved.images?.[i] ?? target.current;
+    const wrap = document.createElement("div");
+    wrap.className = "admin-field";
+    wrap.innerHTML = `
+      <label>${esc(target.label)}</label>
+      <input data-image-index="${i}" value="${esc(src)}" placeholder="images/actor-lankhue.jpg hoặc https://...">
+      <input data-image-file="${i}" type="file" accept="image/*">`;
+    imageFields.appendChild(wrap);
+  });
+
   panel.querySelector("#edit-close").onclick = () => modal.classList.remove("is-open");
   panel.querySelector("#edit-reset").onclick = () => {
     const all = readEdits();
@@ -344,8 +393,15 @@ function openBlockEditor(blockId) {
     const bgUpload = await imageToDataUrl(bgFile);
     const bg = bgUpload || panel.querySelector("#edit-bg").value.trim();
     const texts = [...panel.querySelectorAll("textarea[data-edit-index]")].map((x) => x.value);
+    const images = [];
+    for (const input of [...panel.querySelectorAll("input[data-image-index]")]) {
+      const i = Number(input.dataset.imageIndex);
+      const fileInput = panel.querySelector(`input[data-image-file="${i}"]`);
+      const upload = await imageToDataUrl(fileInput?.files?.[0]);
+      images[i] = upload || input.value.trim();
+    }
     const all = readEdits();
-    all[blockId] = { bg, texts };
+    all[blockId] = { bg, texts, images };
     writeEdits(all);
     applyStoredEdits();
     modal.classList.remove("is-open");
