@@ -22,6 +22,21 @@ const CONTENT = {
     projectTitle: "THẾ THÂN",                  // tên ngắn trên thanh nav
   },
 
+  sectionBackgrounds: {
+    logline: "images/bg-logline.jpg",
+    synopsis: "images/bg-synopsis.jpg",
+    theme: "images/bg-theme.jpg",
+    characters: "images/bg-characters.jpg",
+    tone: "images/bg-tone.jpg",
+    market: "images/bg-market.jpg",
+    vision: "images/bg-vision.jpg",
+    cast: "images/bg-cast.jpg",
+    crew: "images/bg-crew.jpg",
+    budget: "images/bg-budget.jpg",
+    revenue: "images/bg-revenue.jpg",
+    "timeline-sec": "images/bg-timeline.jpg",
+  },
+
   /* ============================ 01 · COVER ============================ */
   cover: {
     eyebrow: "FEATURE FILM · ĐỀ XUẤT SẢN XUẤT",

@@ -42,3 +42,22 @@ Mục tiêu hình ảnh: phim noir xa hoa châu Á, ánh vàng hổ phách, neon
 - Ảnh mood/không có người nổi tiếng: Unsplash, Pexels, Wikimedia Commons, ảnh tự chụp hoặc ảnh AI được quyền thương mại.
 - Ảnh diễn viên/người thật: press kit chính thức, ảnh do ekip cung cấp, hoặc bỏ ảnh người thật và dùng portrait concept.
 - Poster phim tham chiếu: dùng khi pitch nội bộ; nếu public rộng nên kiểm tra quyền hoặc thay bằng thẻ chữ.
+
+## Nguồn ảnh stock đã tải vào bản deploy
+
+Các ảnh nền hiện tại được tải về từ Pexels và xử lý lại theo phong cách đen/đỏ của pitch deck mẫu. Một số ảnh được dùng lại cho card tông thị giác, so sánh thị trường và chân dung concept để tránh placeholder chữ.
+
+| File | Nguồn |
+|---|---|
+| `cover.jpg`, `bg-logline.jpg` | Pexels: `pexels-wolrider-23384400` |
+| `bg-synopsis.jpg` | Pexels: `pexels-kyleloftusstudios-3379938` |
+| `bg-theme.jpg` | Pexels: `pexels-kyleloftusstudios-8880280` |
+| `bg-characters.jpg` | Pexels: `pexels-ron-lach-8089248` |
+| `bg-tone.jpg` | Pexels: `pexels-ron-lach-8089650` |
+| `bg-market.jpg` | Pexels: `pexels-kyleloftusstudios-3411420` |
+| `bg-vision.jpg` | Pexels: `pexels-cottonbro-4123586` |
+| `bg-cast.jpg` | Pexels: `pexels-ron-lach-8088386` |
+| `bg-crew.jpg` | Pexels: `pexels-kyleloftusstudios-2510430` |
+| `bg-budget.jpg` | Pexels: `pexels-kyleloftusstudios-6621416` |
+| `bg-revenue.jpg` | Pexels: `pexels-kyleloftusstudios-4882161` |
+| `bg-timeline.jpg` | Pexels: `pexels-bertellifotografia-12497812` |

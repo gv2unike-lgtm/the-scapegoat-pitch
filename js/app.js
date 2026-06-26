@@ -38,6 +38,13 @@ function addSectionIcons() {
   if (window.lucide) lucide.createIcons();
 }
 
+function applySectionBackgrounds() {
+  Object.entries(C.sectionBackgrounds || {}).forEach(([id, image]) => {
+    const section = document.getElementById(id);
+    if (section && image) section.style.setProperty("--section-bg", `url('${image}')`);
+  });
+}
+
 /* ---------- thanh nav ---------- */
 el("nav-code").textContent  = C.meta.fileCode;
 el("nav-brand").textContent = C.meta.projectTitle;
@@ -86,13 +93,13 @@ el("char-grid").innerHTML = C.characters.items.map((ch) => `
 el("tone-lead").textContent = C.visualTone.intro;
 el("tone-keys").innerHTML = C.visualTone.keywords.map((k) => `<span>${esc(k)}</span>`).join("");
 el("tone-grid").innerHTML = C.visualTone.images.map((t) => `
-  <figure class="tone-item"><img src="${t.image}" alt="${esc(t.caption)}" loading="lazy">
+  <figure class="tone-item"><img src="${t.image}" alt="${esc(t.caption)}">
     <figcaption>${esc(t.caption)}</figcaption></figure>`).join("");
 
 /* ---------- MARKET COMPARISON ---------- */
 el("comp-lead").textContent = C.marketComparison.intro;
 el("comp-grid").innerHTML = C.marketComparison.items.map((m) => `
-  <div class="comp-card"><img src="${m.image}" alt="${esc(m.title)}" loading="lazy">
+  <div class="comp-card"><img src="${m.image}" alt="${esc(m.title)}">
     <div class="comp-card__body"><div class="comp-card__title">${esc(m.title)}</div>
       <div class="comp-card__note">${esc(m.note)}</div></div></div>`).join("");
 
@@ -108,7 +115,7 @@ el("comp-grid").innerHTML = C.marketComparison.items.map((m) => `
 el("cast-grid").innerHTML = C.cast.items.map((p) => `
   <article class="cast-card">
     ${C.cast.badge ? `<span class="cast-card__badge">${esc(C.cast.badge)}</span>` : ""}
-    <img src="${p.image}" alt="${esc(p.name)}" loading="lazy">
+    <img src="${p.image}" alt="${esc(p.name)}">
     <div class="cast-card__body">
       <div class="cast-card__name">${esc(p.name)}</div>
       <div class="cast-card__as">${esc(p.as)}</div>
@@ -186,4 +193,184 @@ const io = new IntersectionObserver((entries) => {
   });
 }, { threshold: 0.12 });
 document.querySelectorAll(".reveal").forEach((n) => io.observe(n));
+applySectionBackgrounds();
 addSectionIcons();
+
+/* ============================================================================
+   ADMIN EDITOR — client-side edits saved in this browser.
+   ============================================================================ */
+const ADMIN_USER = "admin";
+const ADMIN_PASS = "admin@232789";
+const EDIT_STORE = "scapegoat.block.edits.v1";
+const SESSION_STORE = "scapegoat.admin.session";
+const editableSelector = [
+  "h1", "h2", ".h-en", ".lead", "p", "li", ".cover__eyebrow", ".cover__tagline",
+  ".role", ".name", ".char-card__name", ".char-card__actor", ".char-card__role",
+  ".char-card__bio", ".cast-card__name", ".cast-card__as", ".cast-card__note",
+  ".comp-card__title", ".comp-card__note", ".dept", ".detail", ".phase", ".period",
+  ".budget-total", ".budget-note", ".footer__title", ".footer__en", ".footer__contact"
+].join(",");
+
+function readEdits() {
+  try { return JSON.parse(localStorage.getItem(EDIT_STORE) || "{}"); }
+  catch { return {}; }
+}
+
+function writeEdits(edits) {
+  localStorage.setItem(EDIT_STORE, JSON.stringify(edits));
+}
+
+function editableElements(block) {
+  return [...block.querySelectorAll(editableSelector)]
+    .filter((node) => node.offsetParent !== null && !node.closest(".admin-modal") && !node.closest(".edit-block-btn"));
+}
+
+function applyStoredEdits() {
+  const edits = readEdits();
+  Object.entries(edits).forEach(([id, data]) => {
+    const block = document.getElementById(id) || document.querySelector(`[data-edit-block="${id}"]`);
+    if (!block) return;
+    if (data.bg) block.style.setProperty(id === "cover" ? "--unused" : "--section-bg", `url('${data.bg}')`);
+    if (id === "cover" && data.bg) el("cover-bg").style.backgroundImage = `url('${data.bg}')`;
+
+    const nodes = editableElements(block);
+    (data.texts || []).forEach((text, i) => {
+      if (nodes[i]) nodes[i].textContent = text;
+    });
+  });
+}
+
+function ensureAdminModal() {
+  let modal = document.getElementById("admin-modal");
+  if (modal) return modal;
+  modal = document.createElement("div");
+  modal.id = "admin-modal";
+  modal.className = "admin-modal";
+  modal.innerHTML = `<div class="admin-panel" role="dialog" aria-modal="true"></div>`;
+  document.body.appendChild(modal);
+  modal.addEventListener("click", (e) => { if (e.target === modal) modal.classList.remove("is-open"); });
+  return modal;
+}
+
+function imageToDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    if (!file) return resolve("");
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function openLogin() {
+  const modal = ensureAdminModal();
+  const panel = modal.querySelector(".admin-panel");
+  panel.innerHTML = `
+    <h3>Đăng nhập admin</h3>
+    <div class="admin-field"><label>Tài khoản</label><input id="admin-user" autocomplete="username"></div>
+    <div class="admin-field"><label>Mật khẩu</label><input id="admin-pass" type="password" autocomplete="current-password"></div>
+    <div class="admin-actions">
+      <button class="primary" id="admin-submit" type="button">Đăng nhập</button>
+      <button id="admin-close" type="button">Đóng</button>
+    </div>`;
+  modal.classList.add("is-open");
+  panel.querySelector("#admin-close").onclick = () => modal.classList.remove("is-open");
+  panel.querySelector("#admin-submit").onclick = () => {
+    const user = panel.querySelector("#admin-user").value.trim();
+    const pass = panel.querySelector("#admin-pass").value;
+    if (user !== ADMIN_USER || pass !== ADMIN_PASS) {
+      panel.querySelector("#admin-pass").value = "";
+      panel.querySelector("#admin-pass").placeholder = "Sai tài khoản hoặc mật khẩu";
+      return;
+    }
+    sessionStorage.setItem(SESSION_STORE, "1");
+    document.body.classList.add("is-admin");
+    modal.classList.remove("is-open");
+  };
+}
+
+function openBlockEditor(blockId) {
+  const block = document.getElementById(blockId);
+  if (!block) return;
+  const modal = ensureAdminModal();
+  const panel = modal.querySelector(".admin-panel");
+  const nodes = editableElements(block);
+  const edits = readEdits();
+  const saved = edits[blockId] || {};
+  const title = block.querySelector("h2, h1, .footer__title")?.textContent?.trim() || blockId;
+  const bgValue = saved.bg || (blockId === "cover" ? C.cover.image : C.sectionBackgrounds?.[blockId] || "");
+
+  panel.innerHTML = `
+    <h3>Sửa: ${esc(title)}</h3>
+    <div class="admin-field">
+      <label>Ảnh nền URL</label>
+      <input id="edit-bg" value="${esc(bgValue)}" placeholder="images/bg-logline.jpg hoặc https://...">
+    </div>
+    <div class="admin-field">
+      <label>Tải ảnh nền từ máy</label>
+      <input id="edit-file" type="file" accept="image/*">
+    </div>
+    <div id="edit-text-fields"></div>
+    <div class="admin-actions">
+      <button class="primary" id="edit-save" type="button">Lưu block</button>
+      <button id="edit-reset" type="button">Xoá sửa block</button>
+      <button id="edit-close" type="button">Đóng</button>
+    </div>`;
+
+  const fields = panel.querySelector("#edit-text-fields");
+  nodes.forEach((node, i) => {
+    const wrap = document.createElement("div");
+    wrap.className = "admin-field";
+    wrap.innerHTML = `<label>Text ${i + 1}</label><textarea data-edit-index="${i}"></textarea>`;
+    wrap.querySelector("textarea").value = saved.texts?.[i] ?? node.textContent.trim();
+    fields.appendChild(wrap);
+  });
+
+  panel.querySelector("#edit-close").onclick = () => modal.classList.remove("is-open");
+  panel.querySelector("#edit-reset").onclick = () => {
+    const all = readEdits();
+    delete all[blockId];
+    writeEdits(all);
+    location.reload();
+  };
+  panel.querySelector("#edit-save").onclick = async () => {
+    const bgFile = panel.querySelector("#edit-file").files[0];
+    const bgUpload = await imageToDataUrl(bgFile);
+    const bg = bgUpload || panel.querySelector("#edit-bg").value.trim();
+    const texts = [...panel.querySelectorAll("textarea[data-edit-index]")].map((x) => x.value);
+    const all = readEdits();
+    all[blockId] = { bg, texts };
+    writeEdits(all);
+    applyStoredEdits();
+    modal.classList.remove("is-open");
+  };
+  modal.classList.add("is-open");
+}
+
+function setupAdminEditor() {
+  el("admin-login")?.addEventListener("click", () => {
+    if (document.body.classList.contains("is-admin")) {
+      sessionStorage.removeItem(SESSION_STORE);
+      document.body.classList.remove("is-admin");
+      return;
+    }
+    openLogin();
+  });
+
+  const blocks = ["cover", "logline", "synopsis", "theme", "characters", "tone", "market", "vision", "cast", "crew", "budget", "revenue", "timeline-sec"];
+  blocks.forEach((id) => {
+    const block = document.getElementById(id);
+    if (!block || block.querySelector(".edit-block-btn")) return;
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "edit-block-btn";
+    btn.textContent = "Sửa";
+    btn.addEventListener("click", () => openBlockEditor(id));
+    block.appendChild(btn);
+  });
+
+  if (sessionStorage.getItem(SESSION_STORE) === "1") document.body.classList.add("is-admin");
+  applyStoredEdits();
+}
+
+setupAdminEditor();
