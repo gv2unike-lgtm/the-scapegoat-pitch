@@ -165,10 +165,10 @@ const CONTENT = {
       "bên dưới: ánh đèn neon vàng của thành phố về đêm, lụa và vàng, bóng tối màu cà phê đặc.",
     keywords: ["Golden hour xa hoa", "Neon hổ phách", "Bóng tối espresso", "Lụa & ánh kim", "Tương phản nóng–lạnh"],
     images: [
-      { image: "images/tone-1.jpg", caption: "Thành phố về đêm — neon vàng" },
-      { image: "images/tone-2.jpg", caption: "Nội thất thượng lưu — vàng & đồng" },
-      { image: "images/tone-3.jpg", caption: "Bóng tối & ánh kim — căng thẳng" },
-      { image: "images/tone-4.jpg", caption: "Đêm mưa lạnh — ký ức ruồng bỏ" },
+      { image: "images/tone-1.jpg?v=20260626-6", caption: "Hong Kong về đêm — neon ướt" },
+      { image: "images/tone-2.jpg?v=20260626-6", caption: "Khách sạn thượng lưu — vàng & gỗ tối" },
+      { image: "images/tone-3.jpg?v=20260626-6", caption: "Giám sát & deepfake — công nghệ che tội" },
+      { image: "images/tone-4.jpg?v=20260626-6", caption: "Đêm mưa châu Á — ký ức ruồng bỏ" },
     ],
   },
 
@@ -179,10 +179,10 @@ const CONTENT = {
       "Định vị: phim noir xa hoa châu Á cho liên hoan phim quốc tế và nền tảng streaming — " +
       "giao điểm giữa phim tội phạm tâm lý và phê phán giai cấp đang được khán giả toàn cầu ưa chuộng.",
     items: [
-      { title: "Parasite (Ký Sinh Trùng)", note: "Phê phán giai cấp · Cành Cọ Vàng + Oscar", image: "images/comp-1.jpg" },
-      { title: "The Menu", note: "Trừng phạt giới siêu giàu · thriller cao cấp", image: "images/comp-2.jpg" },
-      { title: "Triangle of Sadness", note: "Châm biếm giàu–nghèo · Cành Cọ Vàng", image: "images/comp-3.jpg" },
-      { title: "Squid Game", note: "Người nghèo làm vật thế · hiện tượng streaming", image: "images/comp-4.jpg" },
+      { title: "Parasite (Ký Sinh Trùng)", note: "Phê phán giai cấp · đời sống đô thị châu Á", image: "images/comp-1.jpg?v=20260626-6" },
+      { title: "The Menu", note: "Giới thượng lưu bị bóc trần · thriller cao cấp", image: "images/comp-2.jpg?v=20260626-6" },
+      { title: "Triangle of Sadness", note: "Châm biếm giàu–nghèo · xa hoa mục ruỗng", image: "images/comp-3.jpg?v=20260626-6" },
+      { title: "Squid Game", note: "Người nghèo thành vật thế · quyền lực giám sát", image: "images/comp-4.jpg?v=20260626-6" },
     ],
   },
 

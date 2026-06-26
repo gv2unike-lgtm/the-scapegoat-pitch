@@ -62,6 +62,21 @@ Các ảnh nền hiện tại được tải về từ Pexels và xử lý lại
 | `bg-revenue.jpg` | Pexels: `pexels-kyleloftusstudios-4882161` |
 | `bg-timeline.jpg` | Pexels: `pexels-bertellifotografia-12497812` |
 
+## Ảnh tông thị giác & so sánh thị trường hiện tại
+
+Các ảnh này đã được thay sang bối cảnh châu Á và tinh thần phim noir xã hội: Hong Kong mưa neon, khách sạn thượng lưu, giám sát/deepfake, đêm mưa châu Á, street vendor Việt Nam, hẻm Seoul và đô thị Hong Kong.
+
+| File | Ý đồ hình ảnh | Nguồn |
+|---|---|---|
+| `tone-1.jpg` | Hong Kong đêm mưa, neon ướt | Pexels photo `37144806` |
+| `tone-2.jpg` | Lobby khách sạn thượng lưu, vàng/gỗ tối | Pexels photo `29870245` |
+| `tone-3.jpg` | Camera giám sát, công nghệ che tội | Pexels photo `16560413` |
+| `tone-4.jpg` | Đêm mưa châu Á, ký ức bị bỏ rơi | Pexels photo `37144809` |
+| `comp-1.jpg` | Giai cấp lao động đô thị Việt Nam | Pexels photo `15694425` |
+| `comp-2.jpg` | Hẻm đô thị Seoul, nghèo/giàu đối lập | Pexels photo `21345053` |
+| `comp-3.jpg` | Đô thị Hong Kong xa hoa mục ruỗng | Pexels photo `37192733` |
+| `comp-4.jpg` | Giám sát đô thị, người nghèo thành dữ liệu/vật thế | Pexels photo `30546990` |
+
 ## Ảnh nhân vật/cast hiện tại
 
 Các ảnh dưới đây được chọn lại theo logline và mô tả nhân vật: nữ thâm nhập trong ánh neon, nữ phản diện quyền lực thượng lưu, nam giữ bí mật trong suit, Lão Sói tối/ẩn danh, tài phiệt suit, và khách mời nữ thượng lưu. Tất cả đang dùng người châu Á hoặc bối cảnh châu Á/portrait phù hợp hơn với tinh thần Việt Nam - Hồng Kông.
