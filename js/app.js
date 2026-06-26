@@ -38,10 +38,16 @@ function addSectionIcons() {
   if (window.lucide) lucide.createIcons();
 }
 
+function cssImageUrl(src) {
+  if (!src) return "";
+  if (src.startsWith("images/")) return `../${src}`;
+  return src;
+}
+
 function applySectionBackgrounds() {
   Object.entries(C.sectionBackgrounds || {}).forEach(([id, image]) => {
     const section = document.getElementById(id);
-    if (section && image) section.style.setProperty("--section-bg", `url('${image}')`);
+    if (section && image) section.style.setProperty("--section-bg", `url('${cssImageUrl(image)}')`);
   });
 }
 
@@ -230,7 +236,7 @@ function applyStoredEdits() {
   Object.entries(edits).forEach(([id, data]) => {
     const block = document.getElementById(id) || document.querySelector(`[data-edit-block="${id}"]`);
     if (!block) return;
-    if (data.bg) block.style.setProperty(id === "cover" ? "--unused" : "--section-bg", `url('${data.bg}')`);
+    if (data.bg) block.style.setProperty(id === "cover" ? "--unused" : "--section-bg", `url('${cssImageUrl(data.bg)}')`);
     if (id === "cover" && data.bg) el("cover-bg").style.backgroundImage = `url('${data.bg}')`;
 
     const nodes = editableElements(block);
