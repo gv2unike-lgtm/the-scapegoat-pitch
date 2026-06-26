@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>THẾ THÂN — Pitch Deck</title>
+  <meta name="description" content="Hồ sơ đề xuất sản xuất phim THẾ THÂN (The Scapegoat).">
+
+  <!-- Fonts (tự tải khi xem online) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&family=Manrope:wght@400;500;600&family=Barlow+Condensed:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Thanh trên cùng -->
+  <header class="topbar">
+    <div>
+      <div class="code" id="nav-code"></div>
+      <div class="brand" id="nav-brand"></div>
+    </div>
+    <nav>
+      <a href="#logline">Logline</a>
+      <a href="#synopsis">Nội dung</a>
+      <a href="#characters">Nhân vật</a>
+      <a href="#tone">Tông màu</a>
+      <a href="#cast">Diễn viên</a>
+      <a href="#budget">Vốn</a>
+      <a href="#timeline">Tiến độ</a>
+    </nav>
+  </header>
+
+  <!-- 01 · COVER -->
+  <section class="cover" id="cover">
+    <div class="cover__bg" id="cover-bg"></div>
+    <div class="cover__inner">
+      <span class="cover__eyebrow" id="cover-eyebrow"></span>
+      <h1 id="cover-title"></h1>
+      <p class="cover__tagline" id="cover-tagline"></p>
+      <div class="cover__facts" id="cover-facts"></div>
+      <div class="cover__credits" id="cover-credits"></div>
+    </div>
+  </section>
+
+  <!-- 02 · LOGLINE -->
+  <section class="section" id="logline">
+    <div class="section__wrap reveal">
+      <div class="sec-head"><span class="num">02</span><h2>Logline</h2></div>
+      <p class="logline-quote" id="logline-text"></p>
+    </div>
+  </section>
+
+  <!-- 03 · SYNOPSIS -->
+  <section class="section" id="synopsis">
+    <div class="section__wrap reveal">
+      <div class="sec-head"><span class="num">03</span><h2>Nội dung</h2><span class="h-en">Synopsis</span></div>
+      <div class="synopsis-grid" id="synopsis-body"></div>
+    </div>
+  </section>
+
+  <!-- 04 · THEME -->
+  <section class="section" id="theme">
+    <div class="section__wrap reveal">
+      <div class="sec-head"><span class="num">04</span><h2>Chủ đề</h2><span class="h-en">Theme</span></div>
+      <p class="lead" id="theme-lead" style="margin-bottom:32px"></p>
+      <div class="theme-grid" id="theme-grid"></div>
+    </div>
+  </section>
+
+  <!-- 05 · CHARACTERS -->
+  <section class="section" id="characters">
+    <div class="section__wrap reveal">
+      <div class="sec-head"><span class="num">05</span><h2>Tuyến nhân vật</h2><span class="h-en">Character Breakdown</span></div>
+      <div class="char-grid" id="char-grid"></div>
+    </div>
+  </section>
+
+  <!-- 06 · VISUAL TONE -->
+  <section class="section" id="tone">
+    <div class="section__wrap reveal">
+      <div class="sec-head"><span class="num">06</span><h2>Tông thị giác</h2><span class="h-en">Visual Tone</span></div>
+      <p class="lead" id="tone-lead"></p>
+      <div class="tone-keys" id="tone-keys"></div>
+      <div class="tone-grid" id="tone-grid"></div>
+    </div>
+  </section>
+
+  <!-- 07 · MARKET COMPARISON -->
+  <section class="section" id="market">
+    <div class="section__wrap reveal">
+      <div class="sec-head"><span class="num">07</span><h2>So sánh thị trường</h2><span class="h-en">Market Comparison</span></div>
+      <p class="lead" id="comp-lead"></p>
+      <div class="comp-grid" id="comp-grid"></div>
+    </div>
+  </section>
+
+  <!-- 08 · DIRECTOR VISION -->
+  <section class="section" id="vision">
+    <div class="section__wrap reveal">
+      <div class="sec-head"><span class="num">08</span><h2>Tầm nhìn đạo diễn</h2><span class="h-en">Director Vision</span></div>
+      <div class="vision">
+        <div>
+          <p class="vision__quote" id="vision-quote"></p>
+          <p class="vision__by" id="vision-by"></p>
+        </div>
+        <ul class="vision__film" id="vision-film"></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 09 · CAST -->
+  <section class="section" id="cast">
+    <div class="section__wrap reveal">
+      <div class="sec-head"><span class="num">09</span><h2>Đề bạt diễn viên</h2><span class="h-en">Cast Proposal</span></div>
+      <div class="cast-grid" id="cast-grid"></div>
+    </div>
+  </section>
+
+  <!-- 10 · CREW -->
+  <section class="section" id="crew">
+    <div class="section__wrap reveal">
+      <div class="sec-head"><span class="num">10</span><h2>Nhân sự</h2><span class="h-en">Crew · đề bạt</span></div>
+      <p class="crew-note" id="crew-note"></p>
+      <div class="crew-list" id="crew-list"></div>
+    </div>
+  </section>
+
+  <!-- 11 · BUDGET -->
+  <section class="section" id="budget">
+    <div class="section__wrap reveal">
+      <div class="sec-head"><span class="num">11</span><h2>Vốn</h2><span class="h-en">Budget</span></div>
+      <div class="budget-top">
+        <div class="budget-total" id="budget-total"></div>
+        <p class="budget-note" id="budget-note"></p>
+      </div>
+      <div class="bars" id="budget-bars"></div>
+    </div>
+  </section>
+
+  <!-- 12 · REVENUE -->
+  <section class="section" id="revenue">
+    <div class="section__wrap reveal">
+      <div class="sec-head"><span class="num">12</span><h2>Mô hình doanh thu</h2><span class="h-en">Revenue Model</span></div>
+      <p class="lead" id="revenue-lead"></p>
+      <div class="rounds" id="revenue-rounds"></div>
+      <div class="bars" id="revenue-bars"></div>
+    </div>
+  </section>
+
+  <!-- 13 · TIMELINE -->
+  <section class="section" id="timeline-sec">
+    <div class="section__wrap reveal">
+      <div class="sec-head"><span class="num">13</span><h2>Tiến độ sản xuất</h2><span class="h-en">Production Timeline</span></div>
+      <div class="timeline" id="timeline"></div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="reveal">
+      <div class="footer__title" id="footer-title"></div>
+      <div class="footer__en" id="footer-en"></div>
+      <div class="footer__contact" id="footer-contact"></div>
+    </div>
+  </footer>
+
+  <!-- content.js TRƯỚC, app.js SAU -->
+  <script src="js/content.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
