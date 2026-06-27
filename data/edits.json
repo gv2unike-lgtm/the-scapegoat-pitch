@@ -79,7 +79,7 @@
     ]
   },
   "market": {
-    "bg": "images/admin/20260627125549-market-section-bg-background.jpg",
+    "bg": "images/bg-market.jpg",
     "texts": [
       "So sánh thị trường",
       "Market Comparison",
@@ -94,10 +94,10 @@
       "Người nghèo thành vật thế · quyền lực giám sát"
     ],
     "images": [
-      "images/comp-class.jpg",
-      "images/comp-alley.jpg",
-      "images/comp-city.jpg",
-      "images/comp-monitor.jpg"
+      "images/admin/20260627131231-market-market-parasite-ky-sinh-trung.jpg",
+      "images/admin/20260627131233-market-market-the-menu.jpg",
+      "images/admin/20260627131236-market-market-triangle-of-sadness.jpg",
+      "images/admin/20260627131238-market-market-squid-game.jpg"
     ]
   },
   "characters": {
