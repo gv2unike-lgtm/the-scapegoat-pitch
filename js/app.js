@@ -40,7 +40,8 @@ function addSectionIcons() {
 
 function cssImageUrl(src) {
   if (!src) return "";
-  return src;
+  if (/^(data:|https?:|\/)/.test(src)) return src;
+  return new URL(src, document.baseURI).href;
 }
 
 function cleanCssUrl(value) {
