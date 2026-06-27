@@ -63,5 +63,19 @@
       "images/theme-tech.jpg",
       "images/theme-justice.jpg"
     ]
+  },
+  "tone": {
+    "bg": "images/admin/20260627122359-tone-section-bg-background.jpg",
+    "texts": [
+      "Tông thị giác",
+      "Visual Tone",
+      "Tông màu ẤM — vàng hổ phách, đồng, espresso. Vẻ xa hoa ấm áp che giấu sự mục ruỗng bên dưới: ánh đèn neon vàng của thành phố về đêm, lụa và vàng, bóng tối màu cà phê đặc."
+    ],
+    "images": [
+      "images/tone-hongkong.jpg",
+      "images/tone-luxury.jpg",
+      "images/tone-surveillance.jpg",
+      "images/tone-rain.jpg"
+    ]
   }
 }
