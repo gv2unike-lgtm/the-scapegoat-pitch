@@ -77,5 +77,27 @@
       "images/tone-surveillance.jpg",
       "images/tone-rain.jpg"
     ]
+  },
+  "market": {
+    "bg": "images/admin/20260627125549-market-section-bg-background.jpg",
+    "texts": [
+      "So sánh thị trường",
+      "Market Comparison",
+      "Định vị: phim noir xa hoa châu Á cho liên hoan phim quốc tế và nền tảng streaming — giao điểm giữa phim tội phạm tâm lý và phê phán giai cấp đang được khán giả toàn cầu ưa chuộng.",
+      "Parasite (Ký Sinh Trùng)",
+      "Phê phán giai cấp · đời sống đô thị châu Á",
+      "The Menu",
+      "Giới thượng lưu bị bóc trần · thriller cao cấp",
+      "Triangle of Sadness",
+      "Châm biếm giàu–nghèo · xa hoa mục ruỗng",
+      "Squid Game",
+      "Người nghèo thành vật thế · quyền lực giám sát"
+    ],
+    "images": [
+      "images/comp-class.jpg",
+      "images/comp-alley.jpg",
+      "images/comp-city.jpg",
+      "images/comp-monitor.jpg"
+    ]
   }
 }
