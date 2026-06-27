@@ -1,1 +1,24 @@
-{}
+{
+  "cover": {
+    "bg": "images/cover.jpg",
+    "texts": [
+      "FEATURE FILM · ĐỀ XUẤT SẢN XUẤT",
+      "THẾ THÂNTHE SCAPEGOAT",
+      "Khi tội ác của giới siêu giàu được định giá bằng mạng sống kẻ nghèo.",
+      "Đạo diễn",
+      "Nguyễn Quang Dũng",
+      "Biên kịch",
+      "Sunshine Pham",
+      "Diễn viên (đề bạt)",
+      "Lan Khuê · Thanh Hằng · Kim Lý · Trần Bảo Sơn",
+      "Producer (đề bạt)",
+      "Irene Trịnh"
+    ],
+    "images": [
+      "images/admin/20260627105813-cover-dao-dien.jpg",
+      "images/admin/20260627105815-cover-bien-kich.jpg",
+      "images/admin/20260627105817-cover-dien-vien-de-bat.jpg",
+      "images/tone-luxury.jpg"
+    ]
+  }
+}
