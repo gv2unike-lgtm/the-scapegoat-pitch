@@ -222,6 +222,7 @@ addSectionIcons();
 const ADMIN_USER = "admin";
 const ADMIN_PASS = "admin@232789";
 const EDIT_STORE = "scapegoat.block.edits.v1";
+const REMOTE_EDIT_CACHE = "scapegoat.remote.edits.cache.v1";
 const SESSION_STORE = "scapegoat.admin.session";
 const GITHUB_OWNER = "gv2unike-lgtm";
 const GITHUB_REPO = "the-scapegoat-pitch";
@@ -250,6 +251,16 @@ const editableSelector = [
 function readEdits() {
   try { return JSON.parse(localStorage.getItem(EDIT_STORE) || "{}"); }
   catch { return {}; }
+}
+
+function readRemoteEditCache() {
+  try { return JSON.parse(localStorage.getItem(REMOTE_EDIT_CACHE) || "{}"); }
+  catch { return {}; }
+}
+
+function writeRemoteEditCache(edits) {
+  try { localStorage.setItem(REMOTE_EDIT_CACHE, JSON.stringify(edits || {})); }
+  catch { /* Remote cache is only a speed-up, not required. */ }
 }
 
 function pruneLegacyLocalImages() {
@@ -333,11 +344,41 @@ function applyStoredEdits() {
   applyEdits(readEdits());
 }
 
+function collectEditImages(edits) {
+  const urls = [];
+  Object.values(edits || {}).forEach((data) => {
+    if (data?.bg) urls.push(data.bg);
+    (data?.images || []).forEach((src) => { if (src) urls.push(src); });
+  });
+  return [...new Set(urls)].filter((src) => !src.startsWith("data:"));
+}
+
+function preloadImage(src) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => resolve(true);
+    img.onerror = () => resolve(false);
+    img.src = src;
+  });
+}
+
+async function preloadEditImages(edits) {
+  const urls = collectEditImages(edits);
+  await Promise.all(urls.map(preloadImage));
+}
+
+function applyCachedRemoteEdits() {
+  const cached = readRemoteEditCache();
+  if (Object.keys(cached).length) applyEdits(cached);
+}
+
 async function applyRemoteEdits() {
   try {
-    const res = await fetch(`${REMOTE_EDITS_PATH}?v=${Date.now()}`, { cache: "no-store" });
+    const res = await fetch(REMOTE_EDITS_PATH, { cache: "no-cache" });
     if (!res.ok) return;
     const edits = await res.json();
+    writeRemoteEditCache(edits || {});
+    await preloadEditImages(edits || {});
     applyEdits(edits || {});
   } catch {
     // Offline/local preview still works with content.js and local edits.
@@ -739,6 +780,8 @@ function openBlockEditor(blockId) {
       const publishResult = await publishBlockEdits(token, blockId, data);
       applyEdits({ [blockId]: data });
       localStorage.removeItem(EDIT_STORE);
+      const cachedRemote = readRemoteEditCache();
+      writeRemoteEditCache({ ...cachedRemote, [blockId]: data });
       const summary = uploads.map((u) =>
         `${u.width}x${u.height}, ${Math.round((u.originalBytes || 0) / 1024)}KB -> ${Math.round(u.bytes / 1024)}KB`
       ).join("; ");
@@ -779,6 +822,7 @@ function setupAdminEditor() {
   });
 
   if (sessionStorage.getItem(SESSION_STORE) === "1") document.body.classList.add("is-admin");
+  applyCachedRemoteEdits();
   applyStoredEdits();
   applyRemoteEdits();
 }
