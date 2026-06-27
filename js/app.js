@@ -40,7 +40,6 @@ function addSectionIcons() {
 
 function cssImageUrl(src) {
   if (!src) return "";
-  if (src.startsWith("images/")) return `../${src}`;
   return src;
 }
 
