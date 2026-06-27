@@ -138,5 +138,38 @@
       "images/admin/20260627130434-characters-character-chong-cua-jennifer.jpg",
       "images/admin/20260627130435-characters-character-vai-khach-moi.jpg"
     ]
+  },
+  "cast": {
+    "bg": "images/bg-cast.jpg",
+    "texts": [
+      "Đề bạt diễn viên",
+      "Cast Proposal",
+      "Lan Khuê",
+      "vai Minh Phương",
+      "Diễn viên · người mẫu",
+      "Thanh Hằng",
+      "vai Jennifer",
+      "Diễn viên · người mẫu",
+      "Kim Lý",
+      "vai Vũ",
+      "Diễn viên",
+      "Trần Bảo Sơn",
+      "vai Lão Sói",
+      "Diễn viên",
+      "Thành Long",
+      "vai chồng Jennifer · khách mời",
+      "Tài phiệt Hồng Kông",
+      "Lý Nhã Kỳ",
+      "khách mời · lựa chọn khác",
+      "Diễn viên"
+    ],
+    "images": [
+      "images/admin/20260627132149-cast-cast-lan-khue.jpg",
+      "images/admin/20260627132152-cast-cast-thanh-hang.jpg",
+      "images/admin/20260627132154-cast-cast-kim-ly.jpg",
+      "images/admin/20260627132156-cast-cast-tran-bao-son.jpg",
+      "images/admin/20260627132158-cast-cast-thanh-long.jpg",
+      "images/admin/20260627132159-cast-cast-ly-nha-ky.jpg"
+    ]
   }
 }
