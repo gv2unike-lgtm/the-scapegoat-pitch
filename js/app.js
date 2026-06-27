@@ -447,6 +447,12 @@ function toBase64Utf8(value) {
   return btoa(binary);
 }
 
+function fromBase64Utf8(value) {
+  const binary = atob(String(value || "").replace(/\s/g, ""));
+  const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
+  return new TextDecoder("utf-8").decode(bytes);
+}
+
 function slugFileName(name) {
   const base = String(name || "image")
     .replace(/\.[^.]+$/, "")
@@ -481,7 +487,7 @@ async function githubGetFile(token, path) {
   if (res.status === 404) return { sha: "", content: "" };
   if (!res.ok) throw new Error("Không đọc được dữ liệu từ GitHub. Kiểm tra lại token/quyền repo.");
   const json = await res.json();
-  const content = json.content ? decodeURIComponent(escape(atob(json.content.replace(/\s/g, "")))) : "";
+  const content = json.content ? fromBase64Utf8(json.content) : "";
   return { sha: json.sha || "", content };
 }
 
