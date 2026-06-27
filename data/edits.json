@@ -171,5 +171,9 @@
       "images/admin/20260627132158-cast-cast-thanh-long.jpg",
       "images/admin/20260627132159-cast-cast-ly-nha-ky.jpg"
     ]
+  },
+  "music": {
+    "title": "Demo nhạc phim",
+    "src": "audio/admin/20260627134854-score-demo-shadows-in-the-fog.mp3"
   }
 }
