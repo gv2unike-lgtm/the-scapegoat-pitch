@@ -692,7 +692,8 @@ function setupAdminEditor() {
   });
 
   if (sessionStorage.getItem(SESSION_STORE) === "1") document.body.classList.add("is-admin");
-  applyRemoteEdits().then(applyStoredEdits);
+  applyStoredEdits();
+  applyRemoteEdits();
 }
 
 setupAdminEditor();
