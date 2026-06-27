@@ -227,11 +227,18 @@ const GITHUB_OWNER = "gv2unike-lgtm";
 const GITHUB_REPO = "the-scapegoat-pitch";
 const GITHUB_BRANCH = "main";
 const REMOTE_EDITS_PATH = "data/edits.json";
-const UPLOAD_MAX_EDGE = 1800;
-const UPLOAD_RETRY_EDGE = 1300;
-const UPLOAD_JPEG_QUALITY = .82;
-const UPLOAD_RETRY_QUALITY = .74;
-const UPLOAD_MAX_DATA_URL = 2200000;
+const UPLOAD_MAX_DATA_URL = 1800000;
+const IMAGE_PROFILES = {
+  coverBg: { maxWidth: 1920, maxHeight: 1200, quality: .82, retryQuality: .74, suffix: "cover-bg" },
+  sectionBg: { maxWidth: 1500, maxHeight: 2200, quality: .8, retryQuality: .72, suffix: "section-bg" },
+  coverCredit: { maxWidth: 900, maxHeight: 620, quality: .78, retryQuality: .7, suffix: "credit" },
+  theme: { maxWidth: 900, maxHeight: 900, quality: .78, retryQuality: .7, suffix: "theme" },
+  character: { maxWidth: 900, maxHeight: 1200, quality: .8, retryQuality: .72, suffix: "character" },
+  tone: { maxWidth: 900, maxHeight: 1200, quality: .78, retryQuality: .7, suffix: "tone" },
+  market: { maxWidth: 900, maxHeight: 1350, quality: .78, retryQuality: .7, suffix: "market" },
+  cast: { maxWidth: 900, maxHeight: 1200, quality: .8, retryQuality: .72, suffix: "cast" },
+  inline: { maxWidth: 1000, maxHeight: 1000, quality: .78, retryQuality: .7, suffix: "image" },
+};
 const editableSelector = [
   "h1", "h2", ".h-en", ".lead", "p", "li", ".cover__eyebrow", ".cover__tagline",
   ".role", ".name", ".char-card__name", ".char-card__actor", ".char-card__role",
@@ -283,10 +290,17 @@ function imageTargets(block) {
     .map((node, index) => {
       const card = node.closest(".cover-credit-card, .char-card, .tone-item, .comp-card, .cast-card");
       const label = card?.querySelector(".role, .char-card__name, .cast-card__name, .comp-card__title, figcaption")?.textContent?.trim();
+      const profile = node.closest(".cover-credit-card") ? "coverCredit"
+        : node.closest(".theme-cell") ? "theme"
+        : node.closest(".char-card") ? "character"
+        : node.closest(".tone-item") ? "tone"
+        : node.closest(".comp-card") ? "market"
+        : node.closest(".cast-card") ? "cast"
+        : "inline";
       const current = node.tagName === "IMG"
         ? node.getAttribute("src")
         : cleanCssUrl(node.style.backgroundImage);
-      return { node, index, label: label || `Ảnh ${index + 1}`, current };
+      return { node, index, label: label || `Ảnh ${index + 1}`, current, profile };
     });
 }
 
@@ -367,8 +381,8 @@ function loadImageFromFile(file) {
   });
 }
 
-function drawCompressedImage(img, maxEdge, quality) {
-  const scale = Math.min(1, maxEdge / Math.max(img.naturalWidth, img.naturalHeight));
+function drawCompressedImage(img, profile, quality = profile.quality) {
+  const scale = Math.min(1, profile.maxWidth / img.naturalWidth, profile.maxHeight / img.naturalHeight);
   const canvas = document.createElement("canvas");
   canvas.width = Math.max(1, Math.round(img.naturalWidth * scale));
   canvas.height = Math.max(1, Math.round(img.naturalHeight * scale));
@@ -376,30 +390,50 @@ function drawCompressedImage(img, maxEdge, quality) {
   ctx.fillStyle = "#16100a";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-  return canvas.toDataURL("image/jpeg", quality);
+  return {
+    dataUrl: canvas.toDataURL("image/jpeg", quality),
+    width: canvas.width,
+    height: canvas.height,
+  };
 }
 
-async function imageToDataUrl(file) {
-  if (!file) return "";
+async function imageToDataUrl(file, profileName = "inline") {
+  if (!file) return { dataUrl: "", width: 0, height: 0, bytes: 0, profileName };
   if (!file.type.startsWith("image/")) throw new Error("File tải lên không phải ảnh.");
+  const profile = IMAGE_PROFILES[profileName] || IMAGE_PROFILES.inline;
 
   if (file.type === "image/svg+xml" || file.type === "image/gif") {
     const dataUrl = await readFileAsDataUrl(file);
     if (dataUrl.length > UPLOAD_MAX_DATA_URL) {
       throw new Error("Ảnh quá lớn để lưu trong trình duyệt. Hãy dùng JPG/PNG nhẹ hơn hoặc URL ảnh.");
     }
-    return dataUrl;
+    return { dataUrl, width: 0, height: 0, bytes: Math.round(dataUrl.length * .75), profileName };
   }
 
   const img = await loadImageFromFile(file);
-  let dataUrl = drawCompressedImage(img, UPLOAD_MAX_EDGE, UPLOAD_JPEG_QUALITY);
-  if (dataUrl.length > UPLOAD_MAX_DATA_URL) {
-    dataUrl = drawCompressedImage(img, UPLOAD_RETRY_EDGE, UPLOAD_RETRY_QUALITY);
+  let result = drawCompressedImage(img, profile);
+  if (result.dataUrl.length > UPLOAD_MAX_DATA_URL) {
+    result = drawCompressedImage(img, profile, profile.retryQuality);
   }
-  if (dataUrl.length > UPLOAD_MAX_DATA_URL) {
+  if (result.dataUrl.length > UPLOAD_MAX_DATA_URL) {
+    const tighter = {
+      ...profile,
+      maxWidth: Math.round(profile.maxWidth * .72),
+      maxHeight: Math.round(profile.maxHeight * .72),
+    };
+    result = drawCompressedImage(img, tighter, profile.retryQuality);
+  }
+  if (result.dataUrl.length > UPLOAD_MAX_DATA_URL) {
     throw new Error("Ảnh vẫn quá lớn sau khi nén. Hãy dùng ảnh nhỏ hơn hoặc URL ảnh.");
   }
-  return dataUrl;
+  return {
+    ...result,
+    bytes: Math.round(result.dataUrl.length * .75),
+    originalBytes: file.size,
+    originalWidth: img.naturalWidth,
+    originalHeight: img.naturalHeight,
+    profileName,
+  };
 }
 
 function dataUrlToBase64(dataUrl) {
@@ -471,13 +505,14 @@ async function githubPutFile(token, path, content, message, sha = "") {
   return res.json();
 }
 
-async function publishImageFile(token, file, blockId, label) {
-  const dataUrl = await imageToDataUrl(file);
+async function publishImageFile(token, file, blockId, label, profileName = "inline") {
+  const compressed = await imageToDataUrl(file, profileName);
+  const profile = IMAGE_PROFILES[compressed.profileName] || IMAGE_PROFILES.inline;
   const stamp = new Date().toISOString().replace(/[-:.TZ]/g, "").slice(0, 14);
-  const name = `${stamp}-${slugFileName(blockId)}-${slugFileName(label || file.name)}.jpg`;
+  const name = `${stamp}-${slugFileName(blockId)}-${profile.suffix}-${slugFileName(label || file.name)}.jpg`;
   const path = `images/admin/${name}`;
-  await githubPutFile(token, path, dataUrlToBase64(dataUrl), `Upload ${name}`);
-  return path;
+  await githubPutFile(token, path, dataUrlToBase64(compressed.dataUrl), `Upload ${name}`);
+  return { path, ...compressed };
 }
 
 async function publishBlockEdits(token, blockId, data) {
@@ -544,7 +579,7 @@ function openBlockEditor(blockId) {
     <div class="admin-field">
       <label>GitHub token để xuất bản online</label>
       <input id="publish-token" type="password" autocomplete="off" placeholder="Dán token GitHub, chỉ dùng trong lần bấm xuất bản">
-      <small>Muốn ảnh hiện online mọi nơi thì dùng "Xuất bản online". "Lưu block" chỉ lưu text/URL trong trình duyệt này.</small>
+      <small>Muốn ảnh hiện online mọi nơi thì dùng "Xuất bản online". Ảnh sẽ tự resize/nén theo đúng vị trí trước khi upload lên GitHub.</small>
     </div>
     <div class="admin-error" id="edit-error" role="alert"></div>
     <div class="admin-actions">
@@ -595,11 +630,14 @@ function openBlockEditor(blockId) {
   };
 
   async function collectBlockData({ publish, token }) {
+    const uploads = [];
     const bgFile = panel.querySelector("#edit-file").files[0];
     let bg = panel.querySelector("#edit-bg").value.trim();
     if (bgFile) {
       if (!publish) throw new Error("File ảnh không thể lưu local cho bản online. Hãy bấm Xuất bản online để upload ảnh lên GitHub.");
-      bg = await publishImageFile(token, bgFile, blockId, "background");
+      const uploaded = await publishImageFile(token, bgFile, blockId, "background", blockId === "cover" ? "coverBg" : "sectionBg");
+      bg = uploaded.path;
+      uploads.push(uploaded);
     }
 
     const texts = [...panel.querySelectorAll("textarea[data-edit-index]")].map((x) => x.value);
@@ -610,12 +648,15 @@ function openBlockEditor(blockId) {
       const file = fileInput?.files?.[0];
       if (file) {
         if (!publish) throw new Error("File ảnh không thể lưu local cho bản online. Hãy bấm Xuất bản online để upload ảnh lên GitHub.");
-        images[i] = await publishImageFile(token, file, blockId, input.previousElementSibling?.textContent || `image-${i + 1}`);
+        const target = targets[i];
+        const uploaded = await publishImageFile(token, file, blockId, input.previousElementSibling?.textContent || `image-${i + 1}`, target?.profile || "inline");
+        images[i] = uploaded.path;
+        uploads.push(uploaded);
       } else {
         images[i] = input.value.trim();
       }
     }
-    return { bg, texts, images };
+    return { data: { bg, texts, images }, uploads };
   }
 
   panel.querySelector("#edit-save").onclick = async () => {
@@ -625,7 +666,7 @@ function openBlockEditor(blockId) {
     saveBtn.textContent = "Đang lưu...";
     errorBox.textContent = "";
     try {
-      const data = await collectBlockData({ publish: false, token: "" });
+      const { data } = await collectBlockData({ publish: false, token: "" });
       const all = readEdits();
       all[blockId] = data;
       writeEdits(all);
@@ -651,11 +692,14 @@ function openBlockEditor(blockId) {
     publishBtn.textContent = "Đang xuất bản...";
     errorBox.textContent = "";
     try {
-      const data = await collectBlockData({ publish: true, token });
+      const { data, uploads } = await collectBlockData({ publish: true, token });
       await publishBlockEdits(token, blockId, data);
       applyEdits({ [blockId]: data });
       localStorage.removeItem(EDIT_STORE);
-      errorBox.textContent = "Đã xuất bản online. GitHub Pages có thể cần vài chục giây để cập nhật.";
+      const summary = uploads.map((u) =>
+        `${u.width}x${u.height}, ${Math.round((u.originalBytes || 0) / 1024)}KB -> ${Math.round(u.bytes / 1024)}KB`
+      ).join("; ");
+      errorBox.textContent = `Đã xuất bản online${summary ? ` (${summary})` : ""}. GitHub Pages có thể cần vài chục giây để cập nhật.`;
     } catch (error) {
       errorBox.textContent = error?.message || "Không thể xuất bản online. Vui lòng thử lại.";
     } finally {
