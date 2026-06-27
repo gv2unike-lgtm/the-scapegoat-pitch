@@ -505,6 +505,26 @@ async function githubPutFile(token, path, content, message, sha = "") {
   return res.json();
 }
 
+async function githubDeleteFile(token, path, message) {
+  const current = await githubGetFile(token, path);
+  if (!current.sha) return false;
+  const res = await fetch(githubContentUrl(path), {
+    method: "DELETE",
+    headers: githubHeaders(token),
+    body: JSON.stringify({
+      message,
+      sha: current.sha,
+      branch: GITHUB_BRANCH,
+    }),
+  });
+  if (res.status === 404) return false;
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    throw new Error(`GitHub không xoá được ảnh cũ (${res.status}). ${text.slice(0, 160)}`);
+  }
+  return true;
+}
+
 async function publishImageFile(token, file, blockId, label, profileName = "inline") {
   const compressed = await imageToDataUrl(file, profileName);
   const profile = IMAGE_PROFILES[compressed.profileName] || IMAGE_PROFILES.inline;
@@ -515,14 +535,31 @@ async function publishImageFile(token, file, blockId, label, profileName = "inli
   return { path, ...compressed };
 }
 
+function adminImagePaths(data) {
+  const paths = [];
+  if (data?.bg?.startsWith("images/admin/")) paths.push(data.bg);
+  (data?.images || []).forEach((src) => {
+    if (src?.startsWith?.("images/admin/")) paths.push(src);
+  });
+  return paths;
+}
+
 async function publishBlockEdits(token, blockId, data) {
   const remote = await githubGetFile(token, REMOTE_EDITS_PATH);
   let edits = {};
   try { edits = remote.content ? JSON.parse(remote.content) : {}; }
   catch { edits = {}; }
+  const oldPaths = new Set(adminImagePaths(edits[blockId]));
+  const newPaths = new Set(adminImagePaths(data));
+  const stalePaths = [...oldPaths].filter((path) => !newPaths.has(path));
   edits[blockId] = data;
   const body = JSON.stringify(edits, null, 2) + "\n";
   await githubPutFile(token, REMOTE_EDITS_PATH, toBase64Utf8(body), `Update ${blockId} edits`, remote.sha);
+  const deleted = [];
+  for (const path of stalePaths) {
+    if (await githubDeleteFile(token, path, `Remove old ${blockId} image ${path.split("/").pop()}`)) deleted.push(path);
+  }
+  return { deleted };
 }
 
 function openLogin() {
@@ -693,13 +730,14 @@ function openBlockEditor(blockId) {
     errorBox.textContent = "";
     try {
       const { data, uploads } = await collectBlockData({ publish: true, token });
-      await publishBlockEdits(token, blockId, data);
+      const publishResult = await publishBlockEdits(token, blockId, data);
       applyEdits({ [blockId]: data });
       localStorage.removeItem(EDIT_STORE);
       const summary = uploads.map((u) =>
         `${u.width}x${u.height}, ${Math.round((u.originalBytes || 0) / 1024)}KB -> ${Math.round(u.bytes / 1024)}KB`
       ).join("; ");
-      errorBox.textContent = `Đã xuất bản online${summary ? ` (${summary})` : ""}. GitHub Pages có thể cần vài chục giây để cập nhật.`;
+      const deletedCount = publishResult.deleted?.length || 0;
+      errorBox.textContent = `Đã xuất bản online${summary ? ` (${summary})` : ""}${deletedCount ? `, đã xoá ${deletedCount} ảnh cũ` : ""}. GitHub Pages có thể cần vài chục giây để cập nhật.`;
     } catch (error) {
       errorBox.textContent = error?.message || "Không thể xuất bản online. Vui lòng thử lại.";
     } finally {
