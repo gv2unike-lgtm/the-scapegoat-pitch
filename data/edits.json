@@ -41,5 +41,27 @@
       "Bí mật cuối cùng vỡ òa khi Minh Phương bắn người mẹ ruột của mình một phát chí mạng — mà không hề hay biết."
     ],
     "images": []
+  },
+  "theme": {
+    "bg": "images/admin/20260627115051-theme-section-bg-background.jpg",
+    "texts": [
+      "Chủ đề",
+      "Theme",
+      "Một lát cắt tâm lý xã hội về quyền lực, danh tính và cái giá của sự sống còn.",
+      "Mạng sống kẻ nghèo trở thành hàng hoá che chắn cho tội ác của giới siêu giàu.",
+      "Khi ai cũng là 'thế thân' của một người khác, sự thật về chính mình là thứ đắt nhất.",
+      "Ranh giới giữa thợ săn và con mồi liên tục bị xoá nhoà cho tới khoảnh khắc cuối cùng.",
+      "Đứa con bị bỏ rơi trong đêm mưa trở về như một định mệnh không thể tránh.",
+      "Deepfake biến tội lỗi thành thứ có thể mua bán, chỉnh sửa và xoá bỏ.",
+      "Lật đổ một đế chế từ bên trong — nhưng cái giá phải trả là máu mủ ruột thịt."
+    ],
+    "images": [
+      "images/theme-class.jpg",
+      "images/Danh tính & nguỵ trang.jpg",
+      "images/Kẻ săn mồi & con mồi.jpg",
+      "images/theme-mother.jpg",
+      "images/theme-tech.jpg",
+      "images/theme-justice.jpg"
+    ]
   }
 }
