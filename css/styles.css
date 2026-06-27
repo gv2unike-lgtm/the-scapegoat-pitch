@@ -613,6 +613,11 @@ body.is-admin .edit-block-btn { display: inline-flex; }
   font: inherit;
 }
 .admin-field textarea { min-height: 74px; resize: vertical; }
+.admin-field small {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
 .admin-error {
   min-height: 20px;
   margin-top: 12px;

@@ -224,6 +224,10 @@ const ADMIN_USER = "admin";
 const ADMIN_PASS = "admin@232789";
 const EDIT_STORE = "scapegoat.block.edits.v1";
 const SESSION_STORE = "scapegoat.admin.session";
+const GITHUB_OWNER = "gv2unike-lgtm";
+const GITHUB_REPO = "the-scapegoat-pitch";
+const GITHUB_BRANCH = "main";
+const REMOTE_EDITS_PATH = "data/edits.json";
 const UPLOAD_MAX_EDGE = 1800;
 const UPLOAD_RETRY_EDGE = 1300;
 const UPLOAD_JPEG_QUALITY = .82;
@@ -240,6 +244,15 @@ const editableSelector = [
 function readEdits() {
   try { return JSON.parse(localStorage.getItem(EDIT_STORE) || "{}"); }
   catch { return {}; }
+}
+
+function pruneLegacyLocalImages() {
+  try {
+    const raw = localStorage.getItem(EDIT_STORE);
+    if (raw?.includes("data:image/")) localStorage.removeItem(EDIT_STORE);
+  } catch {
+    localStorage.removeItem(EDIT_STORE);
+  }
 }
 
 function writeEdits(edits) {
@@ -284,8 +297,7 @@ function applyImageTarget(target, src) {
   else target.node.style.backgroundImage = `url('${src}')`;
 }
 
-function applyStoredEdits() {
-  const edits = readEdits();
+function applyEdits(edits) {
   Object.entries(edits).forEach(([id, data]) => {
     const block = document.getElementById(id) || document.querySelector(`[data-edit-block="${id}"]`);
     if (!block) return;
@@ -302,6 +314,21 @@ function applyStoredEdits() {
       if (targets[i]) applyImageTarget(targets[i], src);
     });
   });
+}
+
+function applyStoredEdits() {
+  applyEdits(readEdits());
+}
+
+async function applyRemoteEdits() {
+  try {
+    const res = await fetch(`${REMOTE_EDITS_PATH}?v=${Date.now()}`, { cache: "no-store" });
+    if (!res.ok) return;
+    const edits = await res.json();
+    applyEdits(edits || {});
+  } catch {
+    // Offline/local preview still works with content.js and local edits.
+  }
 }
 
 function ensureAdminModal() {
@@ -376,6 +403,94 @@ async function imageToDataUrl(file) {
   return dataUrl;
 }
 
+function dataUrlToBase64(dataUrl) {
+  return String(dataUrl).split(",")[1] || "";
+}
+
+function toBase64Utf8(value) {
+  const bytes = new TextEncoder().encode(value);
+  let binary = "";
+  bytes.forEach((byte) => { binary += String.fromCharCode(byte); });
+  return btoa(binary);
+}
+
+function slugFileName(name) {
+  const base = String(name || "image")
+    .replace(/\.[^.]+$/, "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/g, "d")
+    .replace(/Đ/g, "D")
+    .replace(/[^a-zA-Z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .toLowerCase();
+  return base || "image";
+}
+
+function githubHeaders(token) {
+  return {
+    "Accept": "application/vnd.github+json",
+    "Authorization": `Bearer ${token}`,
+    "Content-Type": "application/json",
+    "X-GitHub-Api-Version": "2022-11-28",
+  };
+}
+
+function githubContentUrl(path) {
+  const safePath = path.split("/").map(encodeURIComponent).join("/");
+  return `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${safePath}`;
+}
+
+async function githubGetFile(token, path) {
+  const res = await fetch(`${githubContentUrl(path)}?ref=${encodeURIComponent(GITHUB_BRANCH)}`, {
+    headers: githubHeaders(token),
+  });
+  if (res.status === 404) return { sha: "", content: "" };
+  if (!res.ok) throw new Error("Không đọc được dữ liệu từ GitHub. Kiểm tra lại token/quyền repo.");
+  const json = await res.json();
+  const content = json.content ? decodeURIComponent(escape(atob(json.content.replace(/\s/g, "")))) : "";
+  return { sha: json.sha || "", content };
+}
+
+async function githubPutFile(token, path, content, message, sha = "") {
+  const body = {
+    message,
+    content,
+    branch: GITHUB_BRANCH,
+  };
+  if (sha) body.sha = sha;
+
+  const res = await fetch(githubContentUrl(path), {
+    method: "PUT",
+    headers: githubHeaders(token),
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    throw new Error(`GitHub không nhận file (${res.status}). ${text.slice(0, 160)}`);
+  }
+  return res.json();
+}
+
+async function publishImageFile(token, file, blockId, label) {
+  const dataUrl = await imageToDataUrl(file);
+  const stamp = new Date().toISOString().replace(/[-:.TZ]/g, "").slice(0, 14);
+  const name = `${stamp}-${slugFileName(blockId)}-${slugFileName(label || file.name)}.jpg`;
+  const path = `images/admin/${name}`;
+  await githubPutFile(token, path, dataUrlToBase64(dataUrl), `Upload ${name}`);
+  return path;
+}
+
+async function publishBlockEdits(token, blockId, data) {
+  const remote = await githubGetFile(token, REMOTE_EDITS_PATH);
+  let edits = {};
+  try { edits = remote.content ? JSON.parse(remote.content) : {}; }
+  catch { edits = {}; }
+  edits[blockId] = data;
+  const body = JSON.stringify(edits, null, 2) + "\n";
+  await githubPutFile(token, REMOTE_EDITS_PATH, toBase64Utf8(body), `Update ${blockId} edits`, remote.sha);
+}
+
 function openLogin() {
   const modal = ensureAdminModal();
   const panel = modal.querySelector(".admin-panel");
@@ -422,15 +537,22 @@ function openBlockEditor(blockId) {
       <input id="edit-bg" value="${esc(bgValue)}" placeholder="images/bg-logline.jpg hoặc https://...">
     </div>
     <div class="admin-field">
-      <label>Tải ảnh nền từ máy</label>
+      <label>Chọn ảnh nền từ máy</label>
       <input id="edit-file" type="file" accept="image/*">
     </div>
     <div id="edit-text-fields"></div>
     <div id="edit-image-fields"></div>
+    <div class="admin-field">
+      <label>GitHub token để xuất bản online</label>
+      <input id="publish-token" type="password" autocomplete="off" placeholder="Dán token GitHub, chỉ dùng trong lần bấm xuất bản">
+      <small>Muốn ảnh hiện online mọi nơi thì dùng "Xuất bản online". "Lưu block" chỉ lưu text/URL trong trình duyệt này.</small>
+    </div>
     <div class="admin-error" id="edit-error" role="alert"></div>
     <div class="admin-actions">
       <button class="primary" id="edit-save" type="button">Lưu block</button>
+      <button class="primary" id="edit-publish" type="button">Xuất bản online</button>
       <button id="edit-reset" type="button">Xoá sửa block</button>
+      <button id="edit-clear-local" type="button">Xoá bộ nhớ local</button>
       <button id="edit-close" type="button">Đóng</button>
     </div>`;
 
@@ -468,6 +590,35 @@ function openBlockEditor(blockId) {
     writeEdits(all);
     location.reload();
   };
+  panel.querySelector("#edit-clear-local").onclick = () => {
+    localStorage.removeItem(EDIT_STORE);
+    location.reload();
+  };
+
+  async function collectBlockData({ publish, token }) {
+    const bgFile = panel.querySelector("#edit-file").files[0];
+    let bg = panel.querySelector("#edit-bg").value.trim();
+    if (bgFile) {
+      if (!publish) throw new Error("File ảnh không thể lưu local cho bản online. Hãy bấm Xuất bản online để upload ảnh lên GitHub.");
+      bg = await publishImageFile(token, bgFile, blockId, "background");
+    }
+
+    const texts = [...panel.querySelectorAll("textarea[data-edit-index]")].map((x) => x.value);
+    const images = [];
+    for (const input of [...panel.querySelectorAll("input[data-image-index]")]) {
+      const i = Number(input.dataset.imageIndex);
+      const fileInput = panel.querySelector(`input[data-image-file="${i}"]`);
+      const file = fileInput?.files?.[0];
+      if (file) {
+        if (!publish) throw new Error("File ảnh không thể lưu local cho bản online. Hãy bấm Xuất bản online để upload ảnh lên GitHub.");
+        images[i] = await publishImageFile(token, file, blockId, input.previousElementSibling?.textContent || `image-${i + 1}`);
+      } else {
+        images[i] = input.value.trim();
+      }
+    }
+    return { bg, texts, images };
+  }
+
   panel.querySelector("#edit-save").onclick = async () => {
     const saveBtn = panel.querySelector("#edit-save");
     const errorBox = panel.querySelector("#edit-error");
@@ -475,19 +626,9 @@ function openBlockEditor(blockId) {
     saveBtn.textContent = "Đang lưu...";
     errorBox.textContent = "";
     try {
-      const bgFile = panel.querySelector("#edit-file").files[0];
-      const bgUpload = await imageToDataUrl(bgFile);
-      const bg = bgUpload || panel.querySelector("#edit-bg").value.trim();
-      const texts = [...panel.querySelectorAll("textarea[data-edit-index]")].map((x) => x.value);
-      const images = [];
-      for (const input of [...panel.querySelectorAll("input[data-image-index]")]) {
-        const i = Number(input.dataset.imageIndex);
-        const fileInput = panel.querySelector(`input[data-image-file="${i}"]`);
-        const upload = await imageToDataUrl(fileInput?.files?.[0]);
-        images[i] = upload || input.value.trim();
-      }
+      const data = await collectBlockData({ publish: false, token: "" });
       const all = readEdits();
-      all[blockId] = { bg, texts, images };
+      all[blockId] = data;
       writeEdits(all);
       applyStoredEdits();
       modal.classList.remove("is-open");
@@ -498,10 +639,37 @@ function openBlockEditor(blockId) {
       saveBtn.textContent = "Lưu block";
     }
   };
+
+  panel.querySelector("#edit-publish").onclick = async () => {
+    const publishBtn = panel.querySelector("#edit-publish");
+    const errorBox = panel.querySelector("#edit-error");
+    const token = panel.querySelector("#publish-token").value.trim();
+    if (!token) {
+      errorBox.textContent = "Cần GitHub token để upload ảnh và xuất bản online.";
+      return;
+    }
+    publishBtn.disabled = true;
+    publishBtn.textContent = "Đang xuất bản...";
+    errorBox.textContent = "";
+    try {
+      const data = await collectBlockData({ publish: true, token });
+      await publishBlockEdits(token, blockId, data);
+      applyEdits({ [blockId]: data });
+      localStorage.removeItem(EDIT_STORE);
+      errorBox.textContent = "Đã xuất bản online. GitHub Pages có thể cần vài chục giây để cập nhật.";
+    } catch (error) {
+      errorBox.textContent = error?.message || "Không thể xuất bản online. Vui lòng thử lại.";
+    } finally {
+      publishBtn.disabled = false;
+      publishBtn.textContent = "Xuất bản online";
+    }
+  };
   modal.classList.add("is-open");
 }
 
 function setupAdminEditor() {
+  pruneLegacyLocalImages();
+
   el("admin-login")?.addEventListener("click", () => {
     if (document.body.classList.contains("is-admin")) {
       sessionStorage.removeItem(SESSION_STORE);
@@ -524,7 +692,7 @@ function setupAdminEditor() {
   });
 
   if (sessionStorage.getItem(SESSION_STORE) === "1") document.body.classList.add("is-admin");
-  applyStoredEdits();
+  applyRemoteEdits().then(applyStoredEdits);
 }
 
 setupAdminEditor();
