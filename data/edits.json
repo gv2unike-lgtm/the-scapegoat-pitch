@@ -43,7 +43,7 @@
     "images": []
   },
   "theme": {
-    "bg": "images/bg-theme.jpg",
+    "bg": "images/admin/20260627125245-theme-section-bg-background.jpg",
     "texts": [
       "Chủ đề",
       "Theme",
@@ -61,7 +61,7 @@
       "images/Kẻ săn mồi & con mồi.jpg",
       "images/admin/20260627122929-theme-theme-anh-4.jpg",
       "images/admin/20260627124813-theme-theme-anh-5.jpg",
-      "images/theme-justice.jpg"
+      "images/admin/20260627125248-theme-theme-anh-6.jpg"
     ]
   },
   "tone": {
