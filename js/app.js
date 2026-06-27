@@ -224,6 +224,11 @@ const ADMIN_USER = "admin";
 const ADMIN_PASS = "admin@232789";
 const EDIT_STORE = "scapegoat.block.edits.v1";
 const SESSION_STORE = "scapegoat.admin.session";
+const UPLOAD_MAX_EDGE = 1800;
+const UPLOAD_RETRY_EDGE = 1300;
+const UPLOAD_JPEG_QUALITY = .82;
+const UPLOAD_RETRY_QUALITY = .74;
+const UPLOAD_MAX_DATA_URL = 2200000;
 const editableSelector = [
   "h1", "h2", ".h-en", ".lead", "p", "li", ".cover__eyebrow", ".cover__tagline",
   ".role", ".name", ".char-card__name", ".char-card__actor", ".char-card__role",
@@ -238,7 +243,14 @@ function readEdits() {
 }
 
 function writeEdits(edits) {
-  localStorage.setItem(EDIT_STORE, JSON.stringify(edits));
+  try {
+    localStorage.setItem(EDIT_STORE, JSON.stringify(edits));
+  } catch (error) {
+    const quota = error?.name === "QuotaExceededError" || error?.code === 22;
+    throw new Error(quota
+      ? "Ảnh quá lớn để lưu trong trình duyệt. Hãy dùng ảnh nhỏ hơn hoặc URL ảnh."
+      : "Không thể lưu chỉnh sửa. Vui lòng thử lại.");
+  }
 }
 
 function editableElements(block) {
@@ -304,14 +316,64 @@ function ensureAdminModal() {
   return modal;
 }
 
-function imageToDataUrl(file) {
+function readFileAsDataUrl(file) {
   return new Promise((resolve, reject) => {
-    if (!file) return resolve("");
     const reader = new FileReader();
     reader.onload = () => resolve(reader.result);
-    reader.onerror = reject;
+    reader.onerror = () => reject(new Error("Không đọc được file ảnh."));
     reader.readAsDataURL(file);
   });
+}
+
+function loadImageFromFile(file) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      resolve(img);
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error("Không đọc được kích thước ảnh."));
+    };
+    img.src = url;
+  });
+}
+
+function drawCompressedImage(img, maxEdge, quality) {
+  const scale = Math.min(1, maxEdge / Math.max(img.naturalWidth, img.naturalHeight));
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.max(1, Math.round(img.naturalWidth * scale));
+  canvas.height = Math.max(1, Math.round(img.naturalHeight * scale));
+  const ctx = canvas.getContext("2d", { alpha: false });
+  ctx.fillStyle = "#16100a";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  return canvas.toDataURL("image/jpeg", quality);
+}
+
+async function imageToDataUrl(file) {
+  if (!file) return "";
+  if (!file.type.startsWith("image/")) throw new Error("File tải lên không phải ảnh.");
+
+  if (file.type === "image/svg+xml" || file.type === "image/gif") {
+    const dataUrl = await readFileAsDataUrl(file);
+    if (dataUrl.length > UPLOAD_MAX_DATA_URL) {
+      throw new Error("Ảnh quá lớn để lưu trong trình duyệt. Hãy dùng JPG/PNG nhẹ hơn hoặc URL ảnh.");
+    }
+    return dataUrl;
+  }
+
+  const img = await loadImageFromFile(file);
+  let dataUrl = drawCompressedImage(img, UPLOAD_MAX_EDGE, UPLOAD_JPEG_QUALITY);
+  if (dataUrl.length > UPLOAD_MAX_DATA_URL) {
+    dataUrl = drawCompressedImage(img, UPLOAD_RETRY_EDGE, UPLOAD_RETRY_QUALITY);
+  }
+  if (dataUrl.length > UPLOAD_MAX_DATA_URL) {
+    throw new Error("Ảnh vẫn quá lớn sau khi nén. Hãy dùng ảnh nhỏ hơn hoặc URL ảnh.");
+  }
+  return dataUrl;
 }
 
 function openLogin() {
@@ -365,6 +427,7 @@ function openBlockEditor(blockId) {
     </div>
     <div id="edit-text-fields"></div>
     <div id="edit-image-fields"></div>
+    <div class="admin-error" id="edit-error" role="alert"></div>
     <div class="admin-actions">
       <button class="primary" id="edit-save" type="button">Lưu block</button>
       <button id="edit-reset" type="button">Xoá sửa block</button>
@@ -406,22 +469,34 @@ function openBlockEditor(blockId) {
     location.reload();
   };
   panel.querySelector("#edit-save").onclick = async () => {
-    const bgFile = panel.querySelector("#edit-file").files[0];
-    const bgUpload = await imageToDataUrl(bgFile);
-    const bg = bgUpload || panel.querySelector("#edit-bg").value.trim();
-    const texts = [...panel.querySelectorAll("textarea[data-edit-index]")].map((x) => x.value);
-    const images = [];
-    for (const input of [...panel.querySelectorAll("input[data-image-index]")]) {
-      const i = Number(input.dataset.imageIndex);
-      const fileInput = panel.querySelector(`input[data-image-file="${i}"]`);
-      const upload = await imageToDataUrl(fileInput?.files?.[0]);
-      images[i] = upload || input.value.trim();
+    const saveBtn = panel.querySelector("#edit-save");
+    const errorBox = panel.querySelector("#edit-error");
+    saveBtn.disabled = true;
+    saveBtn.textContent = "Đang lưu...";
+    errorBox.textContent = "";
+    try {
+      const bgFile = panel.querySelector("#edit-file").files[0];
+      const bgUpload = await imageToDataUrl(bgFile);
+      const bg = bgUpload || panel.querySelector("#edit-bg").value.trim();
+      const texts = [...panel.querySelectorAll("textarea[data-edit-index]")].map((x) => x.value);
+      const images = [];
+      for (const input of [...panel.querySelectorAll("input[data-image-index]")]) {
+        const i = Number(input.dataset.imageIndex);
+        const fileInput = panel.querySelector(`input[data-image-file="${i}"]`);
+        const upload = await imageToDataUrl(fileInput?.files?.[0]);
+        images[i] = upload || input.value.trim();
+      }
+      const all = readEdits();
+      all[blockId] = { bg, texts, images };
+      writeEdits(all);
+      applyStoredEdits();
+      modal.classList.remove("is-open");
+    } catch (error) {
+      errorBox.textContent = error?.message || "Không thể lưu chỉnh sửa. Vui lòng thử lại.";
+    } finally {
+      saveBtn.disabled = false;
+      saveBtn.textContent = "Lưu block";
     }
-    const all = readEdits();
-    all[blockId] = { bg, texts, images };
-    writeEdits(all);
-    applyStoredEdits();
-    modal.classList.remove("is-open");
   };
   modal.classList.add("is-open");
 }

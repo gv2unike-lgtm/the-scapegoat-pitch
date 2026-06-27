@@ -613,6 +613,12 @@ body.is-admin .edit-block-btn { display: inline-flex; }
   font: inherit;
 }
 .admin-field textarea { min-height: 74px; resize: vertical; }
+.admin-error {
+  min-height: 20px;
+  margin-top: 12px;
+  color: #ffd9c8;
+  font-size: 14px;
+}
 .admin-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
 .admin-actions button {
   border: 1px solid var(--line);
@@ -625,3 +631,7 @@ body.is-admin .edit-block-btn { display: inline-flex; }
   cursor: pointer;
 }
 .admin-actions .primary { background: var(--ember); border-color: var(--ember); }
+.admin-actions button:disabled {
+  cursor: wait;
+  opacity: .58;
+}
