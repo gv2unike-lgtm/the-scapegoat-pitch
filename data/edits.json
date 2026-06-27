@@ -99,5 +99,44 @@
       "images/comp-city.jpg",
       "images/comp-monitor.jpg"
     ]
+  },
+  "characters": {
+    "bg": "images/Characters.png",
+    "texts": [
+      "Tuyến nhân vật",
+      "Character Breakdown",
+      "Minh Phương",
+      "Lan Khuê (đề bạt)",
+      "Nữ chính · Chuyên gia tuyển dụng",
+      "Được Lão Sói nhặt về và đào tạo. Thâm nhập đế chế Jennifer để lật đổ từ bên trong.",
+      "Jennifer",
+      "Thanh Hằng (đề bạt)",
+      "Phản diện chính · Bà trùm đế chế thế thân",
+      "Từ người giúp việc bị hãm hiếp & truy sát trở thành phu nhân tài phiệt, rồi kiến tạo đường dây 'rửa tội' bằng người nghèo và deepfake.",
+      "Vũ",
+      "Kim Lý (đề bạt)",
+      "Người giữ bí mật",
+      "Nắm giữ những bí mật quá khứ có thể khiến cả đế chế lung lay. Mảnh ghép nguy hiểm nhất trong ván cờ.",
+      "Lão Sói",
+      "Trần Bảo Sơn (đề bạt)",
+      "Đối tác · Bậc thầy hiện trường giả",
+      "Đặc vụ ngầm, lão luyện trong việc dàn dựng hiện trường giả. Người đã nuôi dạy Minh Phương.",
+      "Chồng của Jennifer",
+      "Thành Long (đề bạt · khách mời)",
+      "Tài phiệt Hồng Kông",
+      "Người cưu mang và đưa Jennifer vào giới siêu giàu.",
+      "Vai khách mời",
+      "Lý Nhã Kỳ (đề bạt · khách mời)",
+      "Diễn viên khách mời · Lựa chọn thay thế",
+      "Phương án casting bổ sung, linh hoạt cho một tuyến nhân vật quyền lực trong giới thượng lưu."
+    ],
+    "images": [
+      "images/admin/20260627125737-characters-character-minh-phuong.jpg",
+      "images/actor-thanhhang.jpg",
+      "images/actor-kimly.jpg",
+      "images/actor-tranbaoson.jpg",
+      "images/actor-thanhlong.jpg",
+      "images/actor-lynhaky.jpg"
+    ]
   }
 }
