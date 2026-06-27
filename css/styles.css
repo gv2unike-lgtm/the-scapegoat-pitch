@@ -147,22 +147,23 @@ a { color: inherit; }
 .cover-credit-card {
   position: relative;
   overflow: hidden;
-  min-height: 236px;
+  min-height: 268px;
   border: 1px solid rgba(216,162,74,.2);
   background: rgba(22,16,10,.72);
   box-shadow: 0 18px 40px rgba(0,0,0,.22);
 }
 .cover-credit-card img {
   width: 100%;
-  height: 148px;
+  height: 180px;
   object-fit: cover;
+  object-position: center 38%;
   filter: saturate(.92) contrast(1.15) brightness(.68);
 }
 .cover-credit-card::after {
   content: "";
   position: absolute;
   inset: 0 0 auto;
-  height: 148px;
+  height: 180px;
   pointer-events: none;
   background:
     linear-gradient(90deg, rgba(13,9,5,.72), transparent 58%, rgba(13,9,5,.38)),
@@ -180,9 +181,9 @@ a { color: inherit; }
 .cover__credits .name { font-size: 15px; color: var(--cream); }
 @media (max-width: 640px) {
   .cover__credits { grid-template-columns: 1fr; padding: 16px; }
-  .cover-credit-card { min-height: 218px; }
+  .cover-credit-card { min-height: 246px; }
   .cover-credit-card img,
-  .cover-credit-card::after { height: 132px; }
+  .cover-credit-card::after { height: 160px; }
 }
 
 /* ---------- SECTION shell ---------- */
@@ -365,8 +366,9 @@ a { color: inherit; }
 .theme-cell:hover { background: var(--ink-3); }
 .theme-cell img {
   width: 100%;
-  aspect-ratio: 16/9;
+  aspect-ratio: 16/11;
   object-fit: cover;
+  object-position: center 42%;
   filter: saturate(.9) contrast(1.08) brightness(.72);
 }
 .theme-cell__body { padding: 20px 22px 24px; }
