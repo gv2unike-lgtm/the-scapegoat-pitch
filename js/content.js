@@ -26,7 +26,7 @@ const CONTENT = {
     logline: "images/bg-logline.jpg",
     synopsis: "images/bg-synopsis.jpg",
     theme: "images/bg-theme.jpg",
-    characters: "images/Characters.jpg",
+    characters: "images/Characters.png",
     tone: "images/bg-tone.jpg",
     market: "images/bg-market.jpg",
     vision: "images/bg-vision.jpg",
