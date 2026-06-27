@@ -48,13 +48,12 @@ const CONTENT = {
     location: "Việt Nam · Hồng Kông",
     // Khối credit ở chân cover (giống poster phim):
     credits: [
-      { role: "Đạo diễn", name: "David Ren (任浩瑜)" },
-      { role: "Biên kịch", name: "Zhang Jianwei (张建伟) · Sunshine Pham" },
-      { role: "Diễn viên (đề bạt)", name: "Lan Khuê · Thanh Hằng · Kim Lý · Trần Bảo Sơn" },
-      { role: "Producer (đề bạt)", name: "Irene Trịnh" },
+      { role: "Đạo diễn", name: "David Ren (任浩瑜)", image: "images/info-case.jpg" },
+      { role: "Biên kịch", name: "Zhang Jianwei (张建伟) · Sunshine Pham", image: "images/theme-justice.jpg" },
+      { role: "Diễn viên (đề bạt)", name: "Lan Khuê · Thanh Hằng · Kim Lý · Trần Bảo Sơn", image: "images/theme-identity.jpg" },
+      { role: "Producer (đề bạt)", name: "Irene Trịnh", image: "images/tone-luxury.jpg" },
     ],
     image: "images/cover.jpg",         // ảnh nền cover — thay file này
-    infoImage: "images/info-case.jpg",
   },
 
   /* ============================ 02 · LOGLINE ============================ */

@@ -71,10 +71,14 @@ document.title = `${C.cover.title} — ${C.cover.titleEn} · Pitch Deck`;
   el("cover-facts").innerHTML =
     [c.genre, c.year, c.location].filter(Boolean).map((f) => `<span>${esc(f)}</span>`).join("");
   const credits = c.credits.map((cr) =>
-    `<div><div class="role">${esc(cr.role)}</div><div class="name">${esc(cr.name)}</div></div>`).join("");
-  el("cover-credits").innerHTML = `
-    <div class="cover__credits-list">${credits}</div>
-    ${c.infoImage ? `<figure class="cover__info-image"><img src="${c.infoImage}" alt="Case file visual"></figure>` : ""}`;
+    `<article class="cover-credit-card">
+      ${cr.image ? `<img src="${cr.image}" alt="${esc(cr.role)}">` : ""}
+      <div class="cover-credit-card__body">
+        <div class="role">${esc(cr.role)}</div>
+        <div class="name">${esc(cr.name)}</div>
+      </div>
+    </article>`).join("");
+  el("cover-credits").innerHTML = credits;
 })();
 
 /* ---------- LOGLINE ---------- */
@@ -239,15 +243,22 @@ function writeEdits(edits) {
 
 function editableElements(block) {
   return [...block.querySelectorAll(editableSelector)]
-    .filter((node) => node.offsetParent !== null && !node.closest(".admin-modal") && !node.closest(".edit-block-btn"));
+    .filter((node) => {
+      if (node.closest(".admin-modal") || node.closest(".edit-block-btn")) return false;
+      const rect = node.getBoundingClientRect();
+      return rect.width > 0 && rect.height > 0;
+    });
 }
 
 function imageTargets(block) {
-  return [...block.querySelectorAll(".cover__info-image img, .theme-cell img, .char-card__img, .tone-item img, .comp-card img, .cast-card img")]
-    .filter((node) => node.offsetParent !== null)
+  return [...block.querySelectorAll(".cover-credit-card img, .theme-cell img, .char-card__img, .tone-item img, .comp-card img, .cast-card img")]
+    .filter((node) => {
+      const rect = node.getBoundingClientRect();
+      return rect.width > 0 && rect.height > 0;
+    })
     .map((node, index) => {
-      const card = node.closest(".char-card, .tone-item, .comp-card, .cast-card");
-      const label = card?.querySelector(".char-card__name, .cast-card__name, .comp-card__title, figcaption")?.textContent?.trim();
+      const card = node.closest(".cover-credit-card, .char-card, .tone-item, .comp-card, .cast-card");
+      const label = card?.querySelector(".role, .char-card__name, .cast-card__name, .comp-card__title, figcaption")?.textContent?.trim();
       const current = node.tagName === "IMG"
         ? node.getAttribute("src")
         : cleanCssUrl(node.style.backgroundImage);
