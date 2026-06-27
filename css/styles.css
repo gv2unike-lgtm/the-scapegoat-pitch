@@ -258,7 +258,12 @@ a { color: inherit; }
     linear-gradient(270deg, rgba(22,16,10,.05), rgba(22,16,10,.05)),
     linear-gradient(270deg, transparent 0 40%, rgba(197,81,46,.2) 40% calc(40% + 5px), transparent calc(40% + 5px) 100%);
 }
-#logline { --photo-width: min(46vw, 620px); --panel-width: min(700px, calc(100% - min(39vw, 470px))); }
+#logline {
+  --photo-width: min(54vw, 760px);
+  --panel-width: min(700px, calc(100% - min(44vw, 540px)));
+  --panel-margin-left: max(430px, 45vw);
+  --photo-position: center 42%;
+}
 #synopsis { --photo-width: min(36vw, 500px); --panel-width: min(860px, calc(100% - min(31vw, 360px))); --photo-position: 58% center; }
 #theme { --photo-width: min(50vw, 660px); --panel-width: min(760px, calc(100% - min(42vw, 520px))); --photo-position: 44% center; }
 #characters { --photo-width: min(38vw, 510px); --panel-width: min(840px, calc(100% - min(32vw, 370px))); }
