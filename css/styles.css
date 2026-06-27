@@ -80,6 +80,61 @@ a { color: inherit; }
   padding: 8px 13px;
   cursor: pointer;
 }
+.music-player {
+  position: sticky;
+  top: 70px;
+  z-index: 45;
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) minmax(260px, 520px) auto;
+  align-items: center;
+  gap: 14px;
+  padding: 10px var(--pad);
+  background: rgba(13,9,5,.9);
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(10px);
+}
+.music-player__meta { min-width: 0; }
+.music-player__label {
+  display: block;
+  color: var(--gold);
+  font-family: var(--cond);
+  font-size: 11px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+.music-player__meta strong {
+  display: block;
+  overflow: hidden;
+  color: var(--cream);
+  font-size: 14px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.music-player audio {
+  width: 100%;
+  height: 34px;
+  accent-color: var(--ember);
+}
+.edit-music-btn {
+  display: none;
+  border: 1px solid var(--line);
+  background: var(--ember);
+  color: var(--cream);
+  font-family: var(--cond);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+body.is-admin .edit-music-btn { display: inline-flex; }
+@media (max-width: 760px) {
+  .music-player {
+    position: relative;
+    top: auto;
+    grid-template-columns: 1fr;
+  }
+}
 
 /* ---------- COVER ---------- */
 .cover {
@@ -268,7 +323,7 @@ a { color: inherit; }
 #theme { --photo-width: min(50vw, 660px); --panel-width: min(760px, calc(100% - min(42vw, 520px))); --photo-position: 44% center; }
 #characters { --photo-width: min(38vw, 510px); --panel-width: min(840px, calc(100% - min(32vw, 370px))); }
 #tone { --photo-width: min(48vw, 640px); --panel-width: min(760px, calc(100% - min(40vw, 500px))); --photo-position: 54% center; }
-#market { --photo-width: min(34vw, 460px); --panel-width: min(900px, calc(100% - min(29vw, 330px))); }
+#market { --photo-width: min(34vw, 460px); --panel-width: min(900px, calc(100% - min(29vw, 330px))); --photo-position: 64% center; }
 #vision { --photo-width: min(44vw, 590px); --panel-width: min(760px, calc(100% - min(37vw, 450px))); }
 #cast { --photo-width: min(40vw, 540px); --panel-width: min(860px, calc(100% - min(34vw, 410px))); --photo-position: 45% center; }
 #crew { --photo-width: min(32vw, 430px); --panel-width: min(900px, calc(100% - min(27vw, 300px))); }

@@ -229,6 +229,7 @@ const GITHUB_OWNER = "gv2unike-lgtm";
 const GITHUB_REPO = "the-scapegoat-pitch";
 const GITHUB_BRANCH = "main";
 const REMOTE_EDITS_PATH = "data/edits.json";
+const AUDIO_MAX_BYTES = 24 * 1024 * 1024;
 const UPLOAD_MAX_DATA_URL = 1800000;
 const IMAGE_PROFILES = {
   coverBg: { maxWidth: 1920, maxHeight: 1200, quality: .82, retryQuality: .74, suffix: "cover-bg" },
@@ -322,8 +323,25 @@ function applyImageTarget(target, src) {
   else target.node.style.backgroundImage = `url('${src}')`;
 }
 
+function applyMusic(data) {
+  const audio = el("music-audio");
+  const title = el("music-title");
+  if (!audio || !title) return;
+  title.textContent = data?.title || "Chưa có file nhạc";
+  if (data?.src) {
+    const src = cssImageUrl(data.src);
+    if (audio.getAttribute("src") !== src) audio.setAttribute("src", src);
+  } else {
+    audio.removeAttribute("src");
+  }
+}
+
 function applyEdits(edits) {
   Object.entries(edits).forEach(([id, data]) => {
+    if (id === "music") {
+      applyMusic(data);
+      return;
+    }
     const block = document.getElementById(id) || document.querySelector(`[data-edit-block="${id}"]`);
     if (!block) return;
     if (data.bg) block.style.setProperty(id === "cover" ? "--unused" : "--section-bg", `url('${cssImageUrl(data.bg)}')`);
@@ -482,6 +500,11 @@ function dataUrlToBase64(dataUrl) {
   return String(dataUrl).split(",")[1] || "";
 }
 
+function fileExtension(name, fallback = "bin") {
+  const match = String(name || "").toLowerCase().match(/\.([a-z0-9]+)$/);
+  return match?.[1] || fallback;
+}
+
 function toBase64Utf8(value) {
   const bytes = new TextEncoder().encode(value);
   let binary = "";
@@ -583,6 +606,19 @@ async function publishImageFile(token, file, blockId, label, profileName = "inli
   return { path, ...compressed };
 }
 
+async function publishAudioFile(token, file) {
+  if (!file) throw new Error("Chưa chọn file nhạc.");
+  if (!file.type.startsWith("audio/")) throw new Error("File tải lên không phải file audio.");
+  if (file.size > AUDIO_MAX_BYTES) throw new Error("File nhạc quá lớn. Hãy dùng bản demo MP3/AAC dưới 24MB.");
+  const dataUrl = await readFileAsDataUrl(file);
+  const stamp = new Date().toISOString().replace(/[-:.TZ]/g, "").slice(0, 14);
+  const ext = fileExtension(file.name, file.type.includes("mpeg") ? "mp3" : "audio");
+  const name = `${stamp}-score-demo-${slugFileName(file.name)}.${ext}`;
+  const path = `audio/admin/${name}`;
+  await githubPutFile(token, path, dataUrlToBase64(dataUrl), `Upload ${name}`);
+  return { path, bytes: file.size };
+}
+
 function adminImagePaths(data) {
   const paths = [];
   if (data?.bg?.startsWith("images/admin/")) paths.push(data.bg);
@@ -592,13 +628,17 @@ function adminImagePaths(data) {
   return paths;
 }
 
+function adminMusicPaths(data) {
+  return data?.src?.startsWith?.("audio/admin/") ? [data.src] : [];
+}
+
 async function publishBlockEdits(token, blockId, data) {
   const remote = await githubGetFile(token, REMOTE_EDITS_PATH);
   let edits = {};
   try { edits = remote.content ? JSON.parse(remote.content) : {}; }
   catch { edits = {}; }
-  const oldPaths = new Set(adminImagePaths(edits[blockId]));
-  const newPaths = new Set(adminImagePaths(data));
+  const oldPaths = new Set([...adminImagePaths(edits[blockId]), ...adminMusicPaths(edits[blockId])]);
+  const newPaths = new Set([...adminImagePaths(data), ...adminMusicPaths(data)]);
   const stalePaths = [...oldPaths].filter((path) => !newPaths.has(path));
   edits[blockId] = data;
   const body = JSON.stringify(edits, null, 2) + "\n";
@@ -798,6 +838,69 @@ function openBlockEditor(blockId) {
   modal.classList.add("is-open");
 }
 
+function openMusicEditor() {
+  const modal = ensureAdminModal();
+  const panel = modal.querySelector(".admin-panel");
+  const cached = readRemoteEditCache();
+  const music = cached.music || {};
+  panel.innerHTML = `
+    <h3>Sửa demo nhạc phim</h3>
+    <div class="admin-field">
+      <label>Tên track</label>
+      <input id="music-edit-title" value="${esc(music.title || "Demo nhạc phim")}" placeholder="Demo nhạc phim">
+    </div>
+    <div class="admin-field">
+      <label>Chọn file nhạc từ máy</label>
+      <input id="music-edit-file" type="file" accept="audio/*">
+      <small>Nên dùng MP3/AAC dưới 24MB. File sẽ upload lên GitHub để nghe online mọi nơi.</small>
+    </div>
+    <div class="admin-field">
+      <label>GitHub token để xuất bản online</label>
+      <input id="music-publish-token" type="password" autocomplete="off" placeholder="Dán token GitHub">
+    </div>
+    <div class="admin-error" id="music-edit-error" role="alert"></div>
+    <div class="admin-actions">
+      <button class="primary" id="music-publish" type="button">Xuất bản nhạc</button>
+      <button id="music-close" type="button">Đóng</button>
+    </div>`;
+
+  panel.querySelector("#music-close").onclick = () => modal.classList.remove("is-open");
+  panel.querySelector("#music-publish").onclick = async () => {
+    const btn = panel.querySelector("#music-publish");
+    const errorBox = panel.querySelector("#music-edit-error");
+    const token = panel.querySelector("#music-publish-token").value.trim();
+    const file = panel.querySelector("#music-edit-file").files[0];
+    const title = panel.querySelector("#music-edit-title").value.trim() || "Demo nhạc phim";
+    if (!token) {
+      errorBox.textContent = "Cần GitHub token để upload và xuất bản nhạc online.";
+      return;
+    }
+    if (!file && !music.src) {
+      errorBox.textContent = "Hãy chọn file nhạc để xuất bản.";
+      return;
+    }
+    btn.disabled = true;
+    btn.textContent = "Đang xuất bản...";
+    errorBox.textContent = "";
+    try {
+      const uploaded = file ? await publishAudioFile(token, file) : { path: music.src, bytes: 0 };
+      const data = { title, src: uploaded.path };
+      const publishResult = await publishBlockEdits(token, "music", data);
+      applyMusic(data);
+      const cachedRemote = readRemoteEditCache();
+      writeRemoteEditCache({ ...cachedRemote, music: data });
+      const deletedCount = publishResult.deleted?.length || 0;
+      errorBox.textContent = `Đã xuất bản nhạc${uploaded.bytes ? ` (${Math.round(uploaded.bytes / 1024)}KB)` : ""}${deletedCount ? `, đã xoá ${deletedCount} file cũ` : ""}. GitHub Pages có thể cần vài chục giây để cập nhật.`;
+    } catch (error) {
+      errorBox.textContent = error?.message || "Không thể xuất bản nhạc. Vui lòng thử lại.";
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Xuất bản nhạc";
+    }
+  };
+  modal.classList.add("is-open");
+}
+
 function setupAdminEditor() {
   pruneLegacyLocalImages();
 
@@ -809,6 +912,7 @@ function setupAdminEditor() {
     }
     openLogin();
   });
+  el("edit-music-btn")?.addEventListener("click", openMusicEditor);
 
   const blocks = ["cover", "logline", "synopsis", "theme", "characters", "tone", "market", "vision", "cast", "crew", "budget", "revenue", "timeline-sec"];
   blocks.forEach((id) => {

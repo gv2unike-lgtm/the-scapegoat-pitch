@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&family=Roboto+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="css/styles.css?v=20260626-27">
+  <link rel="stylesheet" href="css/styles.css?v=20260626-28">
 </head>
 <body>
 
@@ -32,6 +32,15 @@
     </nav>
     <button class="admin-login" id="admin-login" type="button">Admin</button>
   </header>
+
+  <section class="music-player" id="music-player" aria-label="Demo nhạc phim">
+    <div class="music-player__meta">
+      <span class="music-player__label">Demo nhạc phim</span>
+      <strong id="music-title">Chưa có file nhạc</strong>
+    </div>
+    <audio id="music-audio" controls preload="metadata"></audio>
+    <button class="edit-music-btn" id="edit-music-btn" type="button">Sửa nhạc</button>
+  </section>
 
   <!-- 01 · COVER -->
   <section class="cover" id="cover">
@@ -168,8 +177,8 @@
   </footer>
 
   <!-- content.js TRƯỚC, app.js SAU -->
-  <script src="js/content.js?v=20260626-27"></script>
+  <script src="js/content.js?v=20260626-28"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-  <script src="js/app.js?v=20260626-27"></script>
+  <script src="js/app.js?v=20260626-28"></script>
 </body>
 </html>
