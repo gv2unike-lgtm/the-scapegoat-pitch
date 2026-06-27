@@ -43,7 +43,7 @@
     "images": []
   },
   "theme": {
-    "bg": "images/admin/20260627115051-theme-section-bg-background.jpg",
+    "bg": "images/bg-theme.jpg",
     "texts": [
       "Chủ đề",
       "Theme",
@@ -56,7 +56,7 @@
       "Lật đổ một đế chế từ bên trong — nhưng cái giá phải trả là máu mủ ruột thịt."
     ],
     "images": [
-      "images/theme-class.jpg",
+      "images/admin/20260627115324-theme-theme-anh-1.jpg",
       "images/Danh tính & nguỵ trang.jpg",
       "images/Kẻ săn mồi & con mồi.jpg",
       "images/theme-mother.jpg",
