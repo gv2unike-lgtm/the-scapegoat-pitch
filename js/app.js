@@ -248,7 +248,7 @@ function writeEdits(edits) {
   } catch (error) {
     const quota = error?.name === "QuotaExceededError" || error?.code === 22;
     throw new Error(quota
-      ? "Ảnh quá lớn để lưu trong trình duyệt. Hãy dùng ảnh nhỏ hơn hoặc URL ảnh."
+      ? "Bộ nhớ chỉnh sửa trong trình duyệt đã đầy. Hãy xoá sửa block cũ hoặc dùng đường dẫn ảnh trong thư mục images."
       : "Không thể lưu chỉnh sửa. Vui lòng thử lại.");
   }
 }
